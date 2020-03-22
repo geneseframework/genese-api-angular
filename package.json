@@ -1,8 +1,8 @@
 {
   "name": "genese-api-angular",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
-    "genese-api": "tsc construction/construction.ts && node index.js"
+    "genese-api": "tsc -t es5 construction/construction.ts && node index.js"
   },
   "author": {
     "name": "Gilles Fabre",

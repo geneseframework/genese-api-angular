@@ -7,7 +7,7 @@ const appRootPath = require('app-root-path');
 export class Construction {
 
 	private appRoot = appRootPath.toString();
-	private createOpenApi = new OpenApiFactory();
+	private openApiFactory = new OpenApiFactory();
 	private geneseRequestServiceFactory: GeneseRequestServiceFactory = GeneseRequestServiceFactory.getInstance();
 
 
@@ -18,16 +18,28 @@ export class Construction {
 
 	startConstruction(): void {
 		this.createFolders();
-		this.geneseRequestServiceFactory.init();
-		this.createOpenApi.init();
+		this.createGeneseRequestService();
+		this.createEndpointsServicesAndDataTypes();
 	}
 
 
 
 	createFolders(): void {
 		fse.removeSync(this.appRoot + '/genese');
-		fse.mkdirsSync(this.appRoot + '/genese/genese-api/dtos');
+		fse.mkdirsSync(this.appRoot + '/genese/genese-api/datatypes');
 		fse.mkdirsSync(this.appRoot + '/genese/genese-api/services');
+	}
+
+
+
+	createEndpointsServicesAndDataTypes(): void {
+		this.openApiFactory.init();
+	}
+
+
+
+	createGeneseRequestService(): void {
+		this.geneseRequestServiceFactory.init();
 	}
 
 }

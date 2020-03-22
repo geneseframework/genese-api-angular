@@ -819,49 +819,6 @@
     },
     "components": {
         "schemas": {
-            "HighCapacity": {
-                "title": "Root Type for HighCapacity",
-                "description": "High capacity properties",
-                "type": "object",
-                "properties": {
-                    "name": {
-                        "description": "",
-                        "type": "string"
-                    },
-                    "capacities": {
-                        "description": "",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Capacity"
-                        }
-                    },
-                    "icon": {
-                        "description": "",
-                        "type": "string"
-                    }
-                },
-                "example": {
-                    "name": "some text",
-                    "capacities": [
-                        {
-                            "icon": "some text",
-                            "name": "some text",
-                            "attack": "3",
-                            "availability": "DEGRADED",
-                            "number_incidents": 4
-                        },
-                        {
-                            "icon": "some text",
-                            "name": "some text",
-                            "attack": "1",
-                            "availability": "OK",
-                            "number_incidents": 26
-                        }
-                    ],
-                    "availability": "UNKNOWN",
-                    "icon": "some text"
-                }
-            },
             "Equipment": {
                 "title": "Root Type for equipment",
                 "description": "Equipment properties",
@@ -888,9 +845,6 @@
                 "description": "",
                 "type": "object",
                 "properties": {
-                    "icon": {
-                        "type": "string"
-                    },
                     "name": {
                         "type": "string"
                     },
@@ -949,7 +903,7 @@
                     "comments": {
                         "type": "array",
                         "items": {
-                            "type": "string"
+                            "$ref": "#/components/schemas/Comment"
                         }
                     },
                     "reaction_exists": {
@@ -983,7 +937,7 @@
                         "type": "string"
                     },
                     "sensor": {
-                        "type": "object",
+                        "$ref": "#/components/schemas/Sensor",
                         "properties": {
                             "type": {
                                 "type": "string"
@@ -994,7 +948,7 @@
                         }
                     },
                     "source": {
-                        "type": "object",
+                        "$ref": "#/components/schemas/IncidentSubject",
                         "properties": {
                             "subsystem": {
                                 "type": "string"
@@ -1011,7 +965,7 @@
                         }
                     },
                     "target": {
-                        "type": "object",
+                        "$ref": "#/components/schemas/IncidentSubject",
                         "properties": {
                             "subsystem": {
                                 "type": "string"
@@ -1479,16 +1433,6 @@
                     "message": "some text"
                 }
             },
-            "HC": {
-                "description": "",
-                "type": "object",
-                "properties": {
-                    "high_capacities": {
-                        "$ref": "#/components/schemas/DashboardIndicators",
-                        "description": ""
-                    }
-                }
-            },
             "Dashboard": {
                 "description": "",
                 "type": "object",
@@ -1497,14 +1441,14 @@
                         "description": "",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/DashboardIndicators"
+                            "$ref": "#/components/schemas/HighCapacity"
                         }
                     },
                     "capacities": {
                         "description": "",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/DashboardIndicators"
+                            "$ref": "#/components/schemas/Capacity"
                         }
                     }
                 },
@@ -1535,10 +1479,14 @@
                     ]
                 }
             },
-            "DashboardIndicators": {
+            "HighCapacity": {
+                "title": "Root Type for Capacity",
                 "description": "",
                 "type": "object",
                 "properties": {
+                    "name": {
+                        "type": "string"
+                    },
                     "attack": {
                         "description": "",
                         "enum": [
@@ -1549,19 +1497,81 @@
                         ],
                         "type": "string"
                     },
-                    "number_of_incidents": {
-                        "description": "",
+                    "number_incidents": {
                         "type": "integer"
+                    }
+                },
+                "example": {
+                    "name": "Manoeuvre",
+                    "attack": "3",
+                    "number_incidents": 68
+                }
+            },
+            "IncidentSubject": {
+                "title": "Root Type for IncidentSubject",
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "subsystem": {
+                        "type": "string"
+                    },
+                    "high_capacity": {
+                        "type": "string"
+                    },
+                    "capacity": {
+                        "type": "string"
                     },
                     "name": {
-                        "description": "",
                         "type": "string"
                     }
                 },
                 "example": {
-                    "attack": "0",
-                    "number_of_incidents": 85,
-                    "name": "some text"
+                    "subsystem": "string",
+                    "high_capacity": "string",
+                    "capacity": "string",
+                    "name": "string"
+                }
+            },
+            "Sensor": {
+                "title": "Root Type for Sensor",
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "type": "string",
+                    "name": "string"
+                }
+            },
+            "Comment": {
+                "title": "Root Type for Comment",
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "type": "string"
+                    },
+                    "date": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string"
+                    },
+                    "action": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "user": "string",
+                    "date": "string",
+                    "content": "string",
+                    "action": "string"
                 }
             }
         }

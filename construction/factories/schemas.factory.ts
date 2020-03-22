@@ -1,6 +1,7 @@
 import { InitFactoriesInterface } from './init-factories.interface';
 import { OpenApiService } from '../services/open-api.service';
-import { DtoFileFactory } from './dto-file.factory';
+import { DatatypeFactory } from './datatype.factory';
+import { Schema } from '../models/open-api/schema';
 
 
 export class SchemasFactory implements InitFactoriesInterface {
@@ -14,14 +15,19 @@ export class SchemasFactory implements InitFactoriesInterface {
 
 
 	init(target: any): void {
-		// console.log('SCHEMAS init target', target);
 		if (target?.schemas) {
 			this.openApiService.openApi.components.schemas = {};
-			for (const dtoName of Object.keys(target.schemas)) {
-				const dtoFileFactory = new DtoFileFactory();
-				dtoFileFactory.create(dtoName, target.schemas[dtoName]);
-				this.openApiService.openApi.components.schemas[dtoName] = target.schemas[dtoName];
-			}
+			this.createDataTypes(target.schemas);
+		}
+	}
+
+
+
+	createDataTypes(schemas: Schema[]): void {
+		for (const dataTypeName of Object.keys(schemas)) {
+			const dataTypeFactory = new DatatypeFactory();
+			dataTypeFactory.create(dataTypeName, schemas[dataTypeName]);
+			this.openApiService.openApi.components.schemas[dataTypeName] = schemas[dataTypeName];
 		}
 	}
 

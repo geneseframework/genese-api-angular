@@ -1,11 +1,11 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var file_service_1 = require("../services/file.service");
-var method_1 = require("../models/method");
-var class_service_1 = require("../services/class.service");
+var method_model_1 = require("../models/files/method.model");
+var class_file_model_1 = require("../models/files/class-file.model");
 var GeneseRequestServiceFactory = /** @class */ (function () {
     function GeneseRequestServiceFactory() {
-        this.classService = new class_service_1.ClassService();
+        this.classFile = new class_file_model_1.ClassFile();
         this.fileService = new file_service_1.FileService();
     }
     GeneseRequestServiceFactory.getInstance = function () {
@@ -19,27 +19,27 @@ var GeneseRequestServiceFactory = /** @class */ (function () {
         this.addDeclaration();
         this.addConstructor();
         this.addMethods();
-        // return this.classService.getContent();
-        // this.fileService.createFile(`/genese/genese-api/services/genese-request.service.ts`, this.classService.getContent());
+        // return this.classFile.getContent();
+        // this.fileService.createFile(`/genese/genese-api/services/genese-request.service.ts`, this.classFile.getContent());
     };
     GeneseRequestServiceFactory.prototype.addDeclaration = function () {
-        this.classService.setClassDeclarationPart('GeneseRequestService', '@Injectable()');
+        this.classFile.setClassDeclaration('GeneseRequestService', '@Injectable()');
     };
     GeneseRequestServiceFactory.prototype.addImports = function () {
-        this.classService.addImport('Observable', 'rxjs');
-        this.classService.addImport('HttpClient', '@angular/common/http');
-        this.classService.addImport('Injectable', '@angular/core');
-        this.classService.addImport('GeneseEnvironmentService', 'genese-angular');
+        this.classFile.addImport('Observable', 'rxjs');
+        this.classFile.addImport('HttpClient', '@angular/common/http');
+        this.classFile.addImport('Injectable', '@angular/core');
+        this.classFile.addImport('GeneseEnvironmentService', 'genese-angular');
     };
     GeneseRequestServiceFactory.prototype.addConstructor = function () {
-        this.classService.addParamToConstructor("private http: HttpClient,");
-        this.classService.addParamToConstructor("private geneseEnvironmentService: GeneseEnvironmentService,");
-        this.classService.addInstructionToConstructor("this.init();");
+        this.classFile.addParamToConstructor("private http: HttpClient,");
+        this.classFile.addParamToConstructor("private geneseEnvironmentService: GeneseEnvironmentService,");
+        this.classFile.addInstructionToConstructor("this.init();");
     };
     GeneseRequestServiceFactory.prototype.addMethods = function () {
-        var method = new method_1.Method();
+        var method = new method_model_1.Method();
         method.setDeclaration('init');
-        this.classService.addMethod(method);
+        this.classFile.addMethod(method);
     };
     return GeneseRequestServiceFactory;
 }());

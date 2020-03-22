@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var Property = /** @class */ (function () {
     function Property() {
         this.description = '';

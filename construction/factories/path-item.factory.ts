@@ -1,6 +1,6 @@
 import { InitFactoriesInterface } from './init-factories.interface';
 import { Schema } from '../models/open-api/schema';
-import { DtoFileFactory } from './dto-file.factory';
+import { DatatypeFactory } from './datatype.factory';
 import { PathItem } from '../models/open-api/path-item';
 import { GetRequestFactory } from './get-request.factory';
 import { OpenApiService } from '../services/open-api.service';
@@ -59,9 +59,9 @@ export class PathItemFactory implements InitFactoriesInterface {
 
 
 	createDtoFile(path: string, schema: Schema): void {
-		const dtoFile = new DtoFileFactory();
-		dtoFile.setContent(path, schema);
-		// this.createFile(this.pathGeneseApi + '/dtos/' + key.toLowerCase() + '.dto.ts', dtoFile.getContent());
+		const dtoFile = new DatatypeFactory();
+		dtoFile.addPropertiesAndImports(path, schema);
+		// this.createFile(this.pathGeneseApi + '/dtos/' + key.toLowerCase() + '.dto.model.ts', dtoFile.getContent());
 	}
 
 

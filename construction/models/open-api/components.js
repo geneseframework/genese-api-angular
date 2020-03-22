@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var schemas_1 = require("./schemas");
 var responses_1 = require("./responses");
 var parameters_1 = require("./parameters");

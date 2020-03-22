@@ -1,6 +1,6 @@
 "use strict";
-exports.__esModule = true;
-var dto_file_factory_1 = require("./dto-file.factory");
+Object.defineProperty(exports, "__esModule", { value: true });
+var datatype_factory_1 = require("./datatype.factory");
 var get_request_factory_1 = require("./get-request.factory");
 var open_api_service_1 = require("../services/open-api.service");
 var PathItemFactory = /** @class */ (function () {
@@ -39,9 +39,9 @@ var PathItemFactory = /** @class */ (function () {
         }
     };
     PathItemFactory.prototype.createDtoFile = function (path, schema) {
-        var dtoFile = new dto_file_factory_1.DtoFileFactory();
-        dtoFile.setContent(path, schema);
-        // this.createFile(this.pathGeneseApi + '/dtos/' + key.toLowerCase() + '.dto.ts', dtoFile.getContent());
+        var dtoFile = new datatype_factory_1.DatatypeFactory();
+        dtoFile.addPropertiesAndImports(path, schema);
+        // this.createFile(this.pathGeneseApi + '/dtos/' + key.toLowerCase() + '.dto.model.ts', dtoFile.getContent());
     };
     PathItemFactory.prototype.extractDtos = function (data) {
         try {

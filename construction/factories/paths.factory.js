@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var open_api_service_1 = require("../services/open-api.service");
 var path_item_factory_1 = require("./path-item.factory");
 var PathsFactory = /** @class */ (function () {

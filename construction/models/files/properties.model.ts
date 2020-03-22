@@ -1,4 +1,4 @@
-import { Property } from './property';
+import { Property } from './property.model';
 
 export class Properties {
 		[key: string]: Property

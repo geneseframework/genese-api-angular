@@ -1,10 +1,10 @@
 import { FileService } from '../services/file.service';
-import { Method } from '../models/method';
-import { ClassService } from '../services/class.service';
+import { Method } from '../models/files/method.model';
+import { ClassFile } from '../models/files/class-file.model';
 
 export class GeneseRequestServiceFactory {
 
-	public classService = new ClassService();
+	public classFile = new ClassFile();
 	private fileService: FileService = new FileService();
 	private static instance?: GeneseRequestServiceFactory;
 
@@ -24,31 +24,31 @@ export class GeneseRequestServiceFactory {
 		this.addDeclaration();
 		this.addConstructor();
 		this.addMethods();
-		// return this.classService.getContent();
-		// this.fileService.createFile(`/genese/genese-api/services/genese-request.service.ts`, this.classService.getContent());
+		// return this.classFile.getContent();
+		// this.fileService.createFile(`/genese/genese-api/services/genese-request.service.ts`, this.classFile.getContent());
 	}
 
 
 
 	addDeclaration(): void {
-		this.classService.setClassDeclarationPart('GeneseRequestService', '@Injectable()');
+		this.classFile.setClassDeclaration('GeneseRequestService', '@Injectable()');
 	}
 
 
 
 	addImports(): void {
-		this.classService.addImport('Observable', 'rxjs');
-		this.classService.addImport('HttpClient', '@angular/common/http');
-		this.classService.addImport('Injectable', '@angular/core');
-		this.classService.addImport('GeneseEnvironmentService', 'genese-angular');
+		this.classFile.addImport('Observable', 'rxjs');
+		this.classFile.addImport('HttpClient', '@angular/common/http');
+		this.classFile.addImport('Injectable', '@angular/core');
+		this.classFile.addImport('GeneseEnvironmentService', 'genese-angular');
 	}
 
 
 
 	addConstructor(): void {
-		this.classService.addParamToConstructor(`private http: HttpClient,`);
-		this.classService.addParamToConstructor(`private geneseEnvironmentService: GeneseEnvironmentService,`);
-		this.classService.addInstructionToConstructor(`this.init();`);
+		this.classFile.addParamToConstructor(`private http: HttpClient,`);
+		this.classFile.addParamToConstructor(`private geneseEnvironmentService: GeneseEnvironmentService,`);
+		this.classFile.addInstructionToConstructor(`this.init();`);
 	}
 
 
@@ -56,7 +56,7 @@ export class GeneseRequestServiceFactory {
 	addMethods(): void {
 		let method: Method = new Method();
 		method.setDeclaration('init');
-		this.classService.addMethod(method);
+		this.classFile.addMethod(method);
 	}
 
 

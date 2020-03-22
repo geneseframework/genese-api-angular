@@ -1,10 +1,15 @@
-import { ClassService } from '../services/class.service';
 import { FileService } from '../services/file.service';
-import { Method } from '../models/method';
+import { Method } from '../models/files/method.model';
+import { ClassFile } from '../models/files/class-file.model';
 
-export class ClassServiceFactory {
 
-	private classService?: ClassService = new ClassService();
+// -------------------------------------------------------------------------------
+// TODO : File not used for now. Will check its utility later
+// -------------------------------------------------------------------------------
+
+export class ClassFileFactory {
+
+	private classFile: ClassFile = new ClassFile();
 	public contentFile ?= '';
 	private fileService?: FileService = new FileService();
 	private partOfContentFile ?= '';
@@ -23,7 +28,7 @@ export class ClassServiceFactory {
 
 
 
-	createClassServiceFromFile(path: string): Promise<ClassService> {
+	createClassServiceFromFile(path: string): Promise<ClassFile> {
 		 return this.fileService.readFile(path).then(contentFile => {
 			 this.contentFile = contentFile;
 			 this.partOfContentFile = this.contentFile;
@@ -32,52 +37,52 @@ export class ClassServiceFactory {
 				 .addProperties()
 				 .addConstructor()
 				 .addMethods();
-			 return this.classService;
+			 return this.classFile;
 		});
 	}
 
 
 
-	addImports(): ClassServiceFactory {
+	addImports(): ClassFileFactory {
 		const beforeExportClass = this.partOfContentFile.slice(0, this.partOfContentFile.indexOf('export class'));
-		this.classService.importsPart = beforeExportClass.slice(0, beforeExportClass.lastIndexOf('@'));
+		this.classFile.importsPart = beforeExportClass.slice(0, beforeExportClass.lastIndexOf('@'));
 		this.partOfContentFile = this.partOfContentFile.slice(beforeExportClass.lastIndexOf('@'));
 		return this;
 	}
 
 
 
-	addDeclaration(): ClassServiceFactory {
-		this.classService.classDeclarationPart = `${this.partOfContentFile.slice(0, this.partOfContentFile.indexOf('{') + 1)}\r\n`;
+	addDeclaration(): ClassFileFactory {
+		this.classFile.declarationPart = `${this.partOfContentFile.slice(0, this.partOfContentFile.indexOf('{') + 1)}\r\n`;
 		this.partOfContentFile = this.partOfContentFile.slice(this.partOfContentFile.indexOf('{') + 1);
 		return this;
 	}
 
 
 
-	addProperties(): ClassServiceFactory {
-		this.classService.propertiesPart = `${this.partOfContentFile.slice(0, this.partOfContentFile.indexOf('constructor') - 3)}`;
+	addProperties(): ClassFileFactory {
+		this.classFile.propertiesPart = `${this.partOfContentFile.slice(0, this.partOfContentFile.indexOf('constructor') - 3)}`;
 		this.partOfContentFile = this.partOfContentFile.slice(this.partOfContentFile.indexOf('constructor') - 3);
 		return this;
 	}
 
 
 
-	addConstructor(): ClassServiceFactory {
-		this.classService.constructorPart = `${this.partOfContentFile.slice(0, this.partOfContentFile.indexOf('}') + 1)}\r\n`;
+	addConstructor(): ClassFileFactory {
+		this.classFile.constructorPart = `${this.partOfContentFile.slice(0, this.partOfContentFile.indexOf('}') + 1)}\r\n`;
 		this.partOfContentFile = this.partOfContentFile.slice(this.partOfContentFile.indexOf('}'));
 		return this;
 	}
 
 
 
-	addMethods(): ClassServiceFactory {
+	addMethods(): ClassFileFactory {
 		this.partOfContentFile = this.partOfContentFile.slice(1, this.partOfContentFile.lastIndexOf('}'));
 		while (this.partOfContentFile.indexOf('{') > 0) {
 			this.addLastMethod(this.partOfContentFile);
 		}
 		this.partOfContentFile.lastIndexOf('}');
-		this.classService.setMethodsPart();
+		this.classFile.setMethodsPart();
 		return this;
 	}
 
@@ -102,6 +107,6 @@ export class ClassServiceFactory {
 		method.declaration = textBeforeFirstBracketLastMethod.slice(textBeforeFirstBracketLastMethod.lastIndexOf('\t') + 1);
 		method.setNameParamsType(method.declaration);
 		this.partOfContentFile = textBeforeFirstBracketLastMethod.slice(0, textBeforeFirstBracketLastMethod.lastIndexOf('\t'));
-		this.classService.addMethod(method);
+		this.classFile.addMethod(method);
 	}
 }
