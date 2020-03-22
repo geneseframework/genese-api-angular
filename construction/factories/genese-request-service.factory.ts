@@ -23,9 +23,6 @@ export class GeneseRequestServiceFactory {
 		this.addImports();
 		this.addDeclaration();
 		this.addConstructor();
-		this.addMethods();
-		// return this.classFile.getContent();
-		// this.fileService.createFile(`/genese/genese-api/services/genese-request.service.ts`, this.classFile.getContent());
 	}
 
 
@@ -40,23 +37,14 @@ export class GeneseRequestServiceFactory {
 		this.classFile.addImport('Observable', 'rxjs');
 		this.classFile.addImport('HttpClient', '@angular/common/http');
 		this.classFile.addImport('Injectable', '@angular/core');
-		this.classFile.addImport('GeneseEnvironmentService', 'genese-angular');
+		this.classFile.addImport('GeneseService', 'genese-angular');
 	}
 
 
 
 	addConstructor(): void {
 		this.classFile.addParamToConstructor(`private http: HttpClient,`);
-		this.classFile.addParamToConstructor(`private geneseEnvironmentService: GeneseEnvironmentService,`);
-		this.classFile.addInstructionToConstructor(`this.init();`);
-	}
-
-
-
-	addMethods(): void {
-		let method: Method = new Method();
-		method.setDeclaration('init');
-		this.classFile.addMethod(method);
+		this.classFile.addParamToConstructor(`private geneseService: GeneseService`);
 	}
 
 

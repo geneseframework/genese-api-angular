@@ -17,4 +17,5 @@ export class PathItem {
 	servers?: Server[];
 	summary?: string;
 	trace?: Operation;
+
 }

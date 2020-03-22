@@ -32,14 +32,14 @@ export class Construction {
 
 
 
-	createEndpointsServicesAndDataTypes(): void {
-		this.openApiFactory.init();
+	createGeneseRequestService(): void {
+		this.geneseRequestServiceFactory.init();
 	}
 
 
 
-	createGeneseRequestService(): void {
-		this.geneseRequestServiceFactory.init();
+	createEndpointsServicesAndDataTypes(): void {
+		this.openApiFactory.init();
 	}
 
 }

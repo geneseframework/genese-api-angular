@@ -133,7 +133,7 @@ export class ClassFile {
 
 
 
-	addLineToMethod(methodName: string, line: string) {
+	addLineToMethodAlreadyExisting(methodName: string, line: string) {
 		let method: Method = this._methods.find(e => e.name === methodName);
 		if (method) {
 			method.body = method.body ? `${method.body}\t${line}` : `\t\t${line}`;

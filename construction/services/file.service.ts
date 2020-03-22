@@ -1,4 +1,6 @@
 import { Tools } from './tools';
+import { RestAction } from '../models/rest-action.type';
+import { Method } from '../models/files/method.model';
 
 const fse = require('fs-extra');
 const appRootPath = require('app-root-path');
@@ -60,7 +62,7 @@ export class FileService {
 
 
 	getDataTypeNameFromRefSchema(refSchema: string): string {
-		return  refSchema.slice(refSchema.lastIndexOf('/') + 1);
+		return refSchema.slice(refSchema.lastIndexOf('/') + 1);
 	}
 
 
@@ -75,5 +77,32 @@ export class FileService {
 			className += Tools.capitalize(splittedFileName[i]);
 		}
 		return className;
+	}
+
+
+
+	getMethodWithActionAndEndpoint(action: RestAction, endpoint: string): Method {
+		if (!endpoint) {
+			throw 'No endpoint : impossible to create request method';
+		}
+		let method: Method = new Method();
+		let methodName = '';
+		let params = '';
+		let splittedEndpoint = endpoint.split('/');
+		if (splittedEndpoint.length > 0) {
+			for (let i = 1; i < splittedEndpoint.length; i++) {
+				if (splittedEndpoint[i].charAt(0) === '{') {
+					const path = splittedEndpoint[i].slice(1, -1);
+					const param = Tools.capitalize(path);
+					methodName = `${methodName}By${param}`;
+					params = `${params}, ${param}: string`;
+				} else {
+					methodName = `${methodName}${Tools.capitalize(splittedEndpoint[i])}`;
+				}
+			}
+		}
+		method.name = `${action.toLowerCase()}${methodName}`;
+		method.params = Tools.unCapitalize(params.slice(2));
+		return method;
 	}
 }

@@ -25,6 +25,13 @@ export class Method {
 
 
 
+	addLine(line: string): Method {
+		this.body = this.body ? `${this.body}\t${line}` : `\t\t${line}`;
+		return this;
+	}
+
+
+
 	stringify() : string {
 		return `${this.declaration}${this.body}\r\n${this.end}\r\n`;
 	}

@@ -1,0 +1,1569 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "cyms",
+        "version": "1.0.0",
+        "description": "The API of the Naval Group app CyMS"
+    },
+    "paths": {
+        "/incidents": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "sort",
+                        "description": "Sort incidents by property",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "order",
+                        "description": "ASC | DESC",
+                        "schema": {
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ],
+                            "type": "string"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "status",
+                        "description": "Status of the incident",
+                        "schema": {
+                            "enum": [
+                                "OPENED",
+                                "CLOSED"
+                            ],
+                            "type": "string"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "limit",
+                        "description": "Max number of elements in the list",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "target_high_capacity",
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "pageIndex",
+                        "description": "Number of page",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query"
+                    },
+                    {
+                        "name": "target_capacity",
+                        "description": "",
+                        "schema": {
+                            "type": "number"
+                        },
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Incident"
+                                    }
+                                },
+                                "examples": {
+                                    "array of incidents": {
+                                        "value": [
+                                            {
+                                                "incident_id": "some text",
+                                                "incident_siem_id": "some text",
+                                                "comments": [
+                                                    {
+                                                        "user": "some text",
+                                                        "date": "some text",
+                                                        "content": "some text",
+                                                        "action": "some text"
+                                                    },
+                                                    {
+                                                        "user": "some text",
+                                                        "date": "some text",
+                                                        "content": "some text",
+                                                        "action": "some text"
+                                                    }
+                                                ],
+                                                "reaction_exists": "some text",
+                                                "completion": "some text",
+                                                "count": "some text",
+                                                "create_time": "some text",
+                                                "description": "some text",
+                                                "last_modification_time": "some text",
+                                                "severity": "some text",
+                                                "siem_incident_uri": "some text",
+                                                "status": "some text",
+                                                "title": "some text",
+                                                "sensor": {
+                                                    "type": "some text",
+                                                    "name": "some text"
+                                                },
+                                                "source": {
+                                                    "subsystem": "some text",
+                                                    "high_capacity": "some text",
+                                                    "capacity": "some text",
+                                                    "name": "some text"
+                                                },
+                                                "target": {
+                                                    "subsystem": "some text",
+                                                    "high_capacity": "some text",
+                                                    "capacity": "some text",
+                                                    "name": "some text"
+                                                }
+                                            },
+                                            {
+                                                "incident_id": "some text",
+                                                "incident_siem_id": "some text",
+                                                "comments": [
+                                                    {
+                                                        "user": "some text",
+                                                        "date": "some text",
+                                                        "content": "some text",
+                                                        "action": "some text"
+                                                    },
+                                                    {
+                                                        "user": "some text",
+                                                        "date": "some text",
+                                                        "content": "some text",
+                                                        "action": "some text"
+                                                    }
+                                                ],
+                                                "reaction_exists": "some text",
+                                                "completion": "some text",
+                                                "count": "some text",
+                                                "create_time": "some text",
+                                                "description": "some text",
+                                                "last_modification_time": "some text",
+                                                "severity": "some text",
+                                                "siem_incident_uri": "some text",
+                                                "status": "some text",
+                                                "title": "some text",
+                                                "sensor": {
+                                                    "type": "some text",
+                                                    "name": "some text"
+                                                },
+                                                "source": {
+                                                    "subsystem": "some text",
+                                                    "high_capacity": "some text",
+                                                    "capacity": "some text",
+                                                    "name": "some text"
+                                                },
+                                                "target": {
+                                                    "subsystem": "some text",
+                                                    "high_capacity": "some text",
+                                                    "capacity": "some text",
+                                                    "name": "some text"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Responses found"
+                    }
+                },
+                "summary": "Get all incidents"
+            }
+        },
+        "/incidents/{incident_id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "incident_id",
+                        "description": "Id of the incident",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Incident"
+                                },
+                                "examples": {
+                                    "incident": {
+                                        "value": {
+                                            "incident_id": "some text",
+                                            "incident_siem_id": "some text",
+                                            "comments": [
+                                                {
+                                                    "user": "some text",
+                                                    "date": "some text",
+                                                    "content": "some text",
+                                                    "action": "some text"
+                                                },
+                                                {
+                                                    "user": "some text",
+                                                    "date": "some text",
+                                                    "content": "some text",
+                                                    "action": "some text"
+                                                }
+                                            ],
+                                            "reaction_exists": "some text",
+                                            "completion": "some text",
+                                            "count": "some text",
+                                            "create_time": "some text",
+                                            "description": "some text",
+                                            "last_modification_time": "some text",
+                                            "severity": "some text",
+                                            "siem_incident_uri": "some text",
+                                            "status": "some text",
+                                            "title": "some text",
+                                            "sensor": {
+                                                "type": "some text",
+                                                "name": "some text"
+                                            },
+                                            "source": {
+                                                "subsystem": "some text",
+                                                "high_capacity": "some text",
+                                                "capacity": "some text",
+                                                "name": "some text"
+                                            },
+                                            "target": {
+                                                "subsystem": "some text",
+                                                "high_capacity": "some text",
+                                                "capacity": "some text",
+                                                "name": "some text"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Get an incident with its id"
+                    }
+                }
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "put_incident": {
+                                    "value": {
+                                        "incidents_id": [
+                                            "string"
+                                        ],
+                                        "message": "string",
+                                        "status": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "incident_id",
+                        "description": "Id of the incident",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Incident"
+                                }
+                            }
+                        },
+                        "description": "Get an incident with its id"
+                    }
+                },
+                "summary": "Update multiple incidents statuses"
+            }
+        },
+        "/test": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "test": {
+                                        "value": {
+                                            "id": "myid",
+                                            "name": "myname"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "get"
+                    }
+                }
+            }
+        },
+        "/reactions": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "incident_id",
+                        "description": "Id of the incident",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Reaction"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Get reactions by incident id"
+                    }
+                },
+                "summary": "Get reactions by incident id",
+                "description": "Get reactions by incident id"
+            }
+        },
+        "/reactions/{reaction_id}/steps/{step_id}/validate": {
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IncidentValidation"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "reaction_id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "step_id",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status updated"
+                    }
+                },
+                "summary": "Validate or unvalidate a step",
+                "description": "Validate a step"
+            },
+            "parameters": [
+                {
+                    "name": "reaction_id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "step_id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/incidents/incident/{incident_id}/relaunch_reactions": {
+            "put": {
+                "requestBody": {
+                    "description": "Comment",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Message"
+                            },
+                            "examples": {
+                                "example": {
+                                    "value": {
+                                        "message": "some text"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "incident_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+
+                            }
+                        },
+                        "description": "Status update"
+                    }
+                },
+                "description": "Add comment and relaunch reactions"
+            },
+            "parameters": [
+                {
+                    "name": "incident_id",
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/iam/users": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Users"
+                    }
+                },
+                "summary": "Get all users"
+            },
+            "delete": {
+                "requestBody": {
+                    "description": "users ids",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+
+                            }
+                        },
+                        "description": "User(s) deleted"
+                    }
+                },
+                "summary": "Delete users"
+            }
+        },
+        "/iam/users/create": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserPost"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+
+                            }
+                        },
+                        "description": "Creation done"
+                    }
+                },
+                "summary": "Add new user",
+                "description": "Add new user"
+            }
+        },
+        "/iam/users/user/{user_id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": "User"
+                    }
+                },
+                "summary": "Get an user with its id",
+                "description": "Get an user with its id"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+
+                            }
+                        },
+                        "description": "Update result"
+                    }
+                },
+                "summary": "Update user",
+                "description": "Update user"
+            },
+            "delete": {
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+
+                            }
+                        },
+                        "description": "User removed"
+                    }
+                },
+                "summary": "Delete user"
+            }
+        },
+        "/iam/profiles": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Profile"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Get all profiles"
+                    }
+                },
+                "summary": "Get all profiles",
+                "description": "Get all profiles"
+            }
+        },
+        "/iam/profiles/{profile_id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "profile_id",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Profile"
+                                }
+                            }
+                        },
+                        "description": "Get a profile with its id"
+                    }
+                },
+                "summary": "Get a profile with its id"
+            }
+        },
+        "/iam/policy": {
+            "summary": "Get policy",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Policy"
+                                }
+                            }
+                        },
+                        "description": "Get policy"
+                    }
+                },
+                "summary": "Get policy"
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Policy"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+
+                            }
+                        },
+                        "description": "Policy updated"
+                    }
+                },
+                "summary": "Update policy"
+            }
+        },
+        "/incidents/create_incident": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IncidentPost"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+
+                            }
+                        },
+                        "description": "Incident created"
+                    }
+                },
+                "summary": "Create an incident"
+            }
+        },
+        "/dashboard": {
+            "summary": "Path used to manage the list of dashboards.",
+            "description": "The REST endpoint/path used to list and create zero or more `Dashboard` entities.  This path contains a `GET` and `POST` operation to perform the list and create tasks, respectively.",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dashboard"
+                                },
+                                "examples": {
+                                    "dashboard example": {
+                                        "value": {
+                                            "high_capacities": [
+                                                {
+                                                    "attack": "2",
+                                                    "number_of_incidents": 78,
+                                                    "name": "some text"
+                                                },
+                                                {
+                                                    "attack": "0",
+                                                    "number_of_incidents": 21,
+                                                    "name": "some text"
+                                                }
+                                            ],
+                                            "capacities": [
+                                                {
+                                                    "attack": "1",
+                                                    "number_of_incidents": 33,
+                                                    "name": "some text"
+                                                },
+                                                {
+                                                    "attack": "1",
+                                                    "number_of_incidents": 65,
+                                                    "name": "some text"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successful response - returns the indicators"
+                    }
+                },
+                "operationId": "getdashboard",
+                "summary": "Get dashboard elements of capacities and high_capacities",
+                "description": "Get dashboard elements of capacities and high_capacities"
+            }
+        },
+        "/incidents/count/severities": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/IncidentsBySeverity"
+                                    }
+                                },
+                                "examples": {
+                                    "incidents by severity": {
+                                        "value": [
+                                            {
+                                                "count": 86,
+                                                "severity": "LOW"
+                                            },
+                                            {
+                                                "count": 63,
+                                                "severity": "HIGH"
+                                            },
+                                            {
+                                                "count": 23,
+                                                "severity": "MEDIUM"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Number of incidents by severity"
+                    }
+                },
+                "summary": "Get number of incidents by severity",
+                "description": "Get number of incidents / severity"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "HighCapacity": {
+                "title": "Root Type for HighCapacity",
+                "description": "High capacity properties",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "capacities": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Capacity"
+                        }
+                    },
+                    "icon": {
+                        "description": "",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "name": "some text",
+                    "capacities": [
+                        {
+                            "icon": "some text",
+                            "name": "some text",
+                            "attack": "3",
+                            "availability": "DEGRADED",
+                            "number_incidents": 4
+                        },
+                        {
+                            "icon": "some text",
+                            "name": "some text",
+                            "attack": "1",
+                            "availability": "OK",
+                            "number_incidents": 26
+                        }
+                    ],
+                    "availability": "UNKNOWN",
+                    "icon": "some text"
+                }
+            },
+            "Equipment": {
+                "title": "Root Type for equipment",
+                "description": "Equipment properties",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "id_capacity": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "id": "string",
+                    "id_subsystem": "string",
+                    "name": "string"
+                }
+            },
+            "Capacity": {
+                "title": "Root Type for Capacity",
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "icon": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "attack": {
+                        "description": "",
+                        "enum": [
+                            "0",
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "type": "string"
+                    },
+                    "number_incidents": {
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "name": "Manoeuvre",
+                    "attack": "3",
+                    "number_incidents": 68
+                }
+            },
+            "Subsystem": {
+                "title": "Root Type for Subsystem",
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "id_capacity": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "id": "string",
+                    "id_capacity": "string",
+                    "name": "string"
+                }
+            },
+            "Incident": {
+                "title": "Root Type for Incident",
+                "description": "Incident properties",
+                "type": "object",
+                "properties": {
+                    "incident_id": {
+                        "type": "string"
+                    },
+                    "incident_siem_id": {
+                        "type": "string"
+                    },
+                    "comments": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "reaction_exists": {
+                        "type": "string"
+                    },
+                    "completion": {
+                        "type": "string"
+                    },
+                    "count": {
+                        "type": "string"
+                    },
+                    "create_time": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "last_modification_time": {
+                        "type": "string"
+                    },
+                    "severity": {
+                        "type": "string"
+                    },
+                    "siem_incident_uri": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "sensor": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "source": {
+                        "type": "object",
+                        "properties": {
+                            "subsystem": {
+                                "type": "string"
+                            },
+                            "high_capacity": {
+                                "type": "string"
+                            },
+                            "capacity": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "target": {
+                        "type": "object",
+                        "properties": {
+                            "subsystem": {
+                                "type": "string"
+                            },
+                            "high_capacity": {
+                                "type": "string"
+                            },
+                            "capacity": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "example": {
+                    "incident_id": "string",
+                    "incident_siem_id": "string",
+                    "comments": [
+                        {
+                            "user": "string",
+                            "date": "string",
+                            "content": "string",
+                            "action": "string"
+                        }
+                    ],
+                    "reaction_exists": "boolean",
+                    "completion": "string",
+                    "count": "number",
+                    "create_time": "string",
+                    "description": "string",
+                    "last_modification_time": "string",
+                    "severity": "string",
+                    "siem_incident_uri": "string",
+                    "status": "string",
+                    "title": "string",
+                    "sensor": {
+                        "type": "string",
+                        "name": "string"
+                    },
+                    "source": {
+                        "subsystem": "string",
+                        "high_capacity": "string",
+                        "capacity": "string",
+                        "name": "string"
+                    },
+                    "target": {
+                        "subsystem": "string",
+                        "high_capacity": "string",
+                        "capacity": "string",
+                        "name": "string"
+                    }
+                }
+            },
+            "IncidentsBySeverity": {
+                "title": "Root Type for IncidentsBySeverity",
+                "description": "Number of incidents for a given severity",
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "type": "integer"
+                    },
+                    "severity": {
+                        "description": "The level of the severity",
+                        "enum": [
+                            "LOW",
+                            "MEDIUM",
+                            "HIGH"
+                        ],
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "count": 51,
+                    "severity": "HIGH"
+                }
+            },
+            "Step": {
+                "description": "Step of a reaction",
+                "type": "object",
+                "properties": {
+                    "step_id": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "",
+                        "enum": [
+                            "APPLICABLE",
+                            "SUCCESS",
+                            "FAILURE",
+                            "NOT_APPLICABLE"
+                        ],
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "mandatory": {
+                        "description": "",
+                        "type": "boolean"
+                    },
+                    "description": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "content": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "comment": {
+                        "description": "",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "step_id": "some text",
+                    "status": "FAILURE",
+                    "name": "some text",
+                    "mandatory": true,
+                    "description": "some text",
+                    "content": "some text",
+                    "comment": "some text"
+                }
+            },
+            "Reaction": {
+                "description": "Reaction for a given incident",
+                "type": "object",
+                "properties": {
+                    "reaction_id": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "",
+                        "enum": [
+                            "IN_PROGRESS",
+                            "SUCCESS",
+                            "FAILURE"
+                        ],
+                        "type": "string"
+                    },
+                    "steps": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Step"
+                        }
+                    }
+                },
+                "example": {
+                    "reaction_id": "some text",
+                    "name": "some text",
+                    "description": "some text",
+                    "status": "SUCCESS",
+                    "steps": [
+                        {
+                            "step_id": "some text",
+                            "status": "FAILURE",
+                            "name": "some text",
+                            "mandatory": true,
+                            "description": "some text",
+                            "content": "some text",
+                            "comment": "some text"
+                        },
+                        {
+                            "step_id": "some text",
+                            "status": "SUCCESS",
+                            "name": "some text",
+                            "mandatory": true,
+                            "description": "some text",
+                            "content": "some text",
+                            "comment": "some text"
+                        }
+                    ]
+                }
+            },
+            "IncidentValidation": {
+                "description": "Validation of an incident",
+                "type": "object",
+                "properties": {
+                    "incident_id": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "",
+                        "enum": [
+                            "SUCCESS",
+                            "FAILURE"
+                        ],
+                        "type": "string"
+                    },
+                    "comments": {
+                        "description": "",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "incident_id": "some text",
+                    "status": "FAILURE",
+                    "comments": "some text"
+                }
+            },
+            "User": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "firstname": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "lastname": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "profiles_id": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "locked": {
+                        "description": "",
+                        "type": "boolean"
+                    },
+                    "disabled": {
+                        "description": "",
+                        "type": "boolean"
+                    }
+                },
+                "example": {
+                    "firstname": "some text",
+                    "lastname": "some text",
+                    "user_id": "some text",
+                    "profiles_id": [
+                        "some text",
+                        "some text"
+                    ],
+                    "locked": true,
+                    "disabled": true
+                }
+            },
+            "UsersId": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "users_id": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "example": {
+                    "users_id": [
+                        "some text",
+                        "some text"
+                    ]
+                }
+            },
+            "UserPost": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "firstname": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "lastname": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "user_id": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "profiles_id": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "locked": {
+                        "description": "",
+                        "type": "boolean"
+                    }
+                },
+                "example": {
+                    "firstname": "some text",
+                    "lastname": "some text",
+                    "user_id": "some text",
+                    "profiles_id": [
+                        "some text",
+                        "some text"
+                    ],
+                    "locked": true
+                }
+            },
+            "Profile": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "profile_id": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "users_id": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "example": {
+                    "profile_id": "some text",
+                    "description": "some text",
+                    "users_id": [
+                        "some text",
+                        "some text"
+                    ]
+                }
+            },
+            "Policy": {
+                "description": "Password security policy",
+                "type": "object",
+                "properties": {
+                    "password_min_age": {
+                        "description": "",
+                        "type": "integer"
+                    },
+                    "password_max_age": {
+                        "description": "",
+                        "type": "integer"
+                    },
+                    "password_min_length": {
+                        "description": "",
+                        "type": "integer"
+                    },
+                    "password_history": {
+                        "description": "",
+                        "type": "integer"
+                    },
+                    "password_max_failure": {
+                        "description": "",
+                        "type": "integer"
+                    }
+                },
+                "example": {
+                    "password_min_age": 90,
+                    "password_max_age": 53,
+                    "password_min_length": 4,
+                    "password_history": 38,
+                    "password_max_failure": 73
+                }
+            },
+            "IncidentPost": {
+                "title": "Root Type for Incident",
+                "description": "Incident properties",
+                "type": "object",
+                "properties": {
+                    "description": {
+                        "type": "string"
+                    },
+                    "severity": {
+                        "enum": [
+                            "HIGH",
+                            "MEDIUM",
+                            "LOW"
+                        ],
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "comment": {
+                        "type": "string"
+                    },
+                    "src": {
+                        "type": "object",
+                        "properties": {
+                            "subsystem": {
+                                "type": "string"
+                            },
+                            "high_capacity": {
+                                "type": "string"
+                            },
+                            "capacity": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "dest": {
+                        "type": "object",
+                        "properties": {
+                            "subsystem": {
+                                "type": "string"
+                            },
+                            "high_capacity": {
+                                "type": "string"
+                            },
+                            "capacity": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "example": {
+                    "description": "some text",
+                    "severity": "MEDIUM",
+                    "title": "some text",
+                    "comment": "some text",
+                    "src": {
+                        "subsystem": "some text",
+                        "high_capacity": "some text",
+                        "capacity": "some text",
+                        "name": "some text"
+                    },
+                    "dest": {
+                        "subsystem": "some text",
+                        "high_capacity": "some text",
+                        "capacity": "some text",
+                        "name": "some text"
+                    }
+                }
+            },
+            "Message": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "description": "",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "message": "some text"
+                }
+            },
+            "HC": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "high_capacities": {
+                        "$ref": "#/components/schemas/DashboardIndicators",
+                        "description": ""
+                    }
+                }
+            },
+            "Dashboard": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "high_capacities": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DashboardIndicators"
+                        }
+                    },
+                    "capacities": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DashboardIndicators"
+                        }
+                    }
+                },
+                "example": {
+                    "high_capacities": [
+                        {
+                            "attack": "0",
+                            "number_of_incidents": 96,
+                            "name": "some text"
+                        },
+                        {
+                            "attack": "0",
+                            "number_of_incidents": 65,
+                            "name": "some text"
+                        }
+                    ],
+                    "capacities": [
+                        {
+                            "attack": "3",
+                            "number_of_incidents": 28,
+                            "name": "some text"
+                        },
+                        {
+                            "attack": "0",
+                            "number_of_incidents": 47,
+                            "name": "some text"
+                        }
+                    ]
+                }
+            },
+            "DashboardIndicators": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "attack": {
+                        "description": "",
+                        "enum": [
+                            "0",
+                            "1",
+                            "2",
+                            "3"
+                        ],
+                        "type": "string"
+                    },
+                    "number_of_incidents": {
+                        "description": "",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "attack": "0",
+                    "number_of_incidents": 85,
+                    "name": "some text"
+                }
+            }
+        }
+    }
+}

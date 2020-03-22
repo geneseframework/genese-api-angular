@@ -4,6 +4,8 @@ import { DatatypeFactory } from './datatype.factory';
 import { PathItem } from '../models/open-api/path-item';
 import { GetRequestFactory } from './get-request.factory';
 import { OpenApiService } from '../services/open-api.service';
+import { MediaType } from '../models/open-api/media-type';
+import { Content } from '../models/open-api/content';
 
 
 export class PathItemFactory implements InitFactoriesInterface {
@@ -15,12 +17,19 @@ export class PathItemFactory implements InitFactoriesInterface {
 
 
 
-	init(target: PathItem, route: string): any {
+	init(pathItem: PathItem, route: string): any {
 		this.openApiService.openApi.paths[route] = {};
-		if (target?.get?.responses?.['200']?.['content']) {
-			const getRequestFactory: GetRequestFactory = new GetRequestFactory();
-			getRequestFactory.create(route, target?.get?.responses?.['200']?.['content']);
+		if (this.hasGetRequest(pathItem)) {
+			// console.log('PATH ITEM pathItem ZZZ', pathItem);
+			this.addGetRequest(pathItem, route);
 		}
+	}
+
+
+
+	addGetRequest(target: PathItem, route: string): void {
+		const getRequestFactory: GetRequestFactory = new GetRequestFactory();
+		getRequestFactory.createRequestMethod('GET', route, target?.get?.responses?.['200']?.['content']);
 	}
 
 
@@ -43,7 +52,7 @@ export class PathItemFactory implements InitFactoriesInterface {
 		switch (method) {
 			case 'get':
 				const dtoGetFactory: GetRequestFactory = new GetRequestFactory();
-				// dtoGetFactory.create(pathItem[method]);
+				// dtoGetFactory.createRequestMethod(pathItem[method]);
 				break;
 			default:
 		}
@@ -74,5 +83,11 @@ export class PathItemFactory implements InitFactoriesInterface {
 		catch (err) {
 			throw err;
 		}
+	}
+
+
+
+	hasGetRequest(pathItem: PathItem): boolean {
+		return pathItem?.get?.responses?.['200']?.['content'];
 	}
 }
