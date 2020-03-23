@@ -1,6 +1,6 @@
 {
   "name": "genese-api-angular",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "scripts": {
     "genese-api": "tsc -t es5 construction/construction.ts && node index.js"
   },

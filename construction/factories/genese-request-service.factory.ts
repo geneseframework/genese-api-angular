@@ -1,11 +1,9 @@
 import { FileService } from '../services/file.service';
-import { Method } from '../models/files/method.model';
 import { ClassFile } from '../models/files/class-file.model';
 
 export class GeneseRequestServiceFactory {
 
 	public classFile = new ClassFile();
-	private fileService: FileService = new FileService();
 	private static instance?: GeneseRequestServiceFactory;
 
 	private constructor() {
@@ -23,6 +21,7 @@ export class GeneseRequestServiceFactory {
 		this.addImports();
 		this.addDeclaration();
 		this.addConstructor();
+		// console.log('GRSF this.classFile.content', this.classFile.content);
 	}
 
 

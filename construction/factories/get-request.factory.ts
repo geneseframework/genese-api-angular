@@ -34,14 +34,16 @@ export class GetRequestFactory {
 			if (schema?.$ref) {
 				observableType = this.fileService.getDataTypeNameFromRefSchema(schema?.$ref);
 				importFrom = `${this.fileService.getFileNameWithClassName(observableType)}.datatype`;
+				console.log('GET REQUEST FACTORY importFrom', importFrom);
 				this.addGetOneMethod(method, observableType, endpoint);
+				this.geneseRequestService.addImport(observableType, `../datatypes/${importFrom}`);
 			} else if (schema?.type) {
 				// TODO
 			}
 		} else {
 			// TODO
 		}
-		this.geneseRequestService.addImport(observableType, `../datatypes/${importFrom}`);
+		console.log('GET REQUEST FACTORY observableType', observableType);
 		this.fileService.createFile(`/genese/genese-api/services/`, `genese-request.service.ts`, this.geneseRequestService.content);
 	}
 
