@@ -2,6 +2,7 @@ import { Property } from '../models/files/property.model';
 import { Schema } from '../models/open-api/schema';
 import { FileService } from '../services/file.service';
 import { ClassFile } from '../models/files/class-file.model';
+import { getDataTypeNameFromRefSchema, toKebabCase } from '../services/tools.service';
 
 export class DatatypeFactory {
 
@@ -14,7 +15,7 @@ export class DatatypeFactory {
 
 	create(dataTypeName: string, schema: Schema) {
 		this.classFile
-			.setFileName(`${this.fileService.getFileNameWithClassName(dataTypeName)}.datatype.ts`)
+			.setFileName(`${toKebabCase(dataTypeName)}.datatype.ts`)
 			.setFolder(`/genese/genese-api/datatypes/`)
 			.setClassDeclaration(dataTypeName);
 		this.addPropertiesAndImports(dataTypeName, schema);
@@ -48,8 +49,8 @@ export class DatatypeFactory {
 				return '\'\'';
 			default: {
 				if (property['$ref']) {
-					const dataTypeName = this.fileService.getDataTypeNameFromRefSchema(property['$ref']);
-					this.classFile.addImport(dataTypeName, `./${this.fileService.getFileNameWithClassName(dataTypeName)}.datatype`);
+					const dataTypeName = getDataTypeNameFromRefSchema(property['$ref']);
+					this.classFile.addImport(dataTypeName, `./${toKebabCase(dataTypeName)}.datatype`);
 					return `new ${dataTypeName}()`;
 				} else {
 					return '\'\'';

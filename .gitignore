@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /genese
+/construction/**/*.js
 # Only exists if Bazel was run
 /bazel-out
 
