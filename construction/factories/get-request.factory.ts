@@ -4,7 +4,8 @@ import { Method } from '../models/files/method.model';
 import { GeneseRequestServiceFactory } from './genese-request-service.factory';
 import { ClassFile } from '../models/files/class-file.model';
 import { RestAction } from '../models/rest-action.type';
-import { getDataTypeNameFromRefSchema, getRequestMethod, toKebabCase } from '../services/tools.service';
+import { getDataTypeNameFromRefSchema, getRequestMethod, toKebabCase, toPascalCase } from '../services/tools.service';
+import { GeneseMethod } from '../models/genese-method.enum';
 
 
 export class GetRequestFactory {
@@ -20,18 +21,17 @@ export class GetRequestFactory {
 
 
 	public createRequestMethod(action: RestAction, endpoint: string, content: Content) {
-		let observableType = '';
-		let importFrom = '';
 		const method = getRequestMethod(action, endpoint);
-		if (content['application/json']) {
-			const schema: any = content['application/json'].schema;
+		if (content['application/json']?.schema || content['text/plain']?.schema) {
+			const schema: any = content['application/json']?.schema ?? content['text/plain'].schema;
 			if (schema?.$ref) {
-				observableType = getDataTypeNameFromRefSchema(schema?.$ref);
-				importFrom = `${toKebabCase(observableType)}.datatype`;
-				this.addGetOneMethod(method, observableType, endpoint);
-				this.geneseRequestService.addImport(observableType, `../datatypes/${importFrom}`);
+				this.createMethod(method, schema?.$ref, endpoint, GeneseMethod.GET_ONE_CUSTOM);
 			} else if (schema?.type) {
-				// TODO
+				if (schema.type === 'array') {
+					if (schema.items.$ref) {
+						this.createMethod(method, schema.items.$ref, endpoint, GeneseMethod.GET_ALL_CUSTOM);
+					}
+				}
 			}
 		} else {
 			// TODO
@@ -41,10 +41,13 @@ export class GetRequestFactory {
 
 
 
-	addGetOneMethod(method: Method, observableType: string, endpoint: string): void {
+	createMethod(method: Method, ref: string, endpoint: string, geneseMethod: GeneseMethod): void {
+		const observableType = getDataTypeNameFromRefSchema(ref);
+		const importFrom = `${toKebabCase(observableType)}.datatype`;
+		this.geneseRequestService.addImport(observableType, `../datatypes/${importFrom}`);
 		method.setDeclaration(method.name, method.params, `Observable<${observableType}>`);
-		const endpointWithParams = endpoint.replace('{', '${');
-		const returnLine = `return this.geneseService.getGeneseInstance(${observableType}).getOneCustom(\`${endpointWithParams}\`);`;
+		const endpointWithParams = toPascalCase(endpoint.replace('{', '${'));
+		const returnLine = `return this.geneseService.getGeneseInstance(${observableType}).${geneseMethod}(\`${endpointWithParams}\`);`;
 		method.addLine(returnLine);
 		this.geneseRequestService.addMethod(method);
 	}

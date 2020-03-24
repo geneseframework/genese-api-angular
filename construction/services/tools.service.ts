@@ -1,7 +1,7 @@
 import { RestAction } from '../models/rest-action.type';
 import { Method } from '../models/files/method.model';
 
-const specialChars = new RegExp(/{}-_\//);
+const specialChars = new RegExp(/[{}\-_\/]/);
 
 
 
@@ -12,19 +12,36 @@ const specialChars = new RegExp(/{}-_\//);
 
 
 
-export function toCamelCase(word: string): string {
-	return  word.charAt(0).toLowerCase();
+export function toCamelCase(word = ''): string {
+	let formattedText = '';
+	for (let i = 0; i < word.length; i++) {
+		if (/[\-_]/.test(word.charAt(i))) {
+			if (i < word.length - 1) {
+				formattedText += `${word.charAt(i + 1).toUpperCase()}`;
+				i ++;
+			}
+		} else {
+			formattedText += word.charAt(i);
+		}
+	}
+	return formattedText;
 }
 
 
 
-export function capitalize(word: string): string {
+export function toPascalCase(word = ''): string {
+	return  capitalize(toCamelCase(word));
+}
+
+
+
+export function capitalize(word = ''): string {
 	return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
 
 
-export function unCapitalize(word: string): string {
+export function unCapitalize(word = ''): string {
 	return word.charAt(0).toLowerCase() + word.slice(1);
 }
 
@@ -69,9 +86,9 @@ export function getRequestMethod(action: RestAction, endpoint: string): Method {
 		for (let i = 1; i < splittedEndpoint.length; i++) {
 			if (splittedEndpoint[i].charAt(0) === '{') {
 				const path = splittedEndpoint[i].slice(1, -1);
-				const param = capitalize(path);
+				const param = toPascalCase(path);
 				methodName = `${methodName}By${param}`;
-				params = `${params}, ${param}: string`;
+				params = `${params}, ${param} = ''`;
 			} else {
 				methodName = `${methodName}${capitalize(splittedEndpoint[i])}`;
 			}
@@ -80,4 +97,9 @@ export function getRequestMethod(action: RestAction, endpoint: string): Method {
 	method.name = `${action.toLowerCase()}${methodName}`;
 	method.params = unCapitalize(params.slice(2));
 	return method;
+}
+
+
+export function f() {
+
 }
