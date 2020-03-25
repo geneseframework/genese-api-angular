@@ -76,7 +76,7 @@ export function getDataTypeNameFromRefSchema(refSchema: string): string {
 
 export function getRequestMethod(action: RestAction, endpoint: string): Method {
 	if (!endpoint || !action) {
-		throw 'No action or endpoint : impossible to create request method';
+		throw 'No action or endpoint : impossible to createGetMethod request method';
 	}
 	let method: Method = new Method();
 	let methodName = '';

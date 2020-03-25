@@ -20,8 +20,10 @@ export class PathItemFactory implements InitFactoriesInterface {
 	init(pathItem: PathItem, route: string): any {
 		this.openApiService.openApi.paths[route] = {};
 		if (this.hasGetRequest(pathItem)) {
-			// console.log('PATH ITEM pathItem ZZZ', pathItem);
 			this.addGetRequest(pathItem, route);
+		}
+		if (this.hasPostRequest(pathItem)) {
+			this.addPostRequest(pathItem, route);
 		}
 	}
 
@@ -29,12 +31,25 @@ export class PathItemFactory implements InitFactoriesInterface {
 
 	addGetRequest(target: PathItem, route: string): void {
 		const getRequestFactory: GetRequestFactory = new GetRequestFactory();
-		getRequestFactory.createRequestMethod('GET', route, target?.get?.responses?.['200']?.['content']);
+		getRequestFactory.createGetMethod('GET', route, target?.get?.responses?.['200']?.['content']);
 	}
 
 
 
 	hasGetRequest(pathItem: PathItem): boolean {
 		return pathItem?.get?.responses?.['200']?.['content'];
+	}
+
+
+
+	addPostRequest(target: PathItem, route: string): void {
+		const getRequestFactory: GetRequestFactory = new GetRequestFactory();
+		getRequestFactory.createPostMethod('POST', route, target?.post?.requestBody?.['content']);
+	}
+
+
+
+	hasPostRequest(pathItem: PathItem): boolean {
+		return pathItem?.post?.requestBody?.['content'];
 	}
 }

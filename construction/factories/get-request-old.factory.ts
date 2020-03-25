@@ -9,7 +9,7 @@
 // import { GeneseRequestServiceFactory } from './genese-request-service.factory';
 // import { ClassFile } from '../models/files/class-file.model';
 //
-// // TODO : Keep this file for now. Delete it if you're sure to never want to create service files for each request method
+// // TODO : Keep this file for now. Delete it if you're sure to never want to createGetMethod service files for each request method
 //
 // export class GetRequestFactory {
 //
@@ -28,7 +28,7 @@
 //
 //
 //
-// 	public create(route: string, content: Content) {
+// 	public createGetMethod(route: string, content: Content) {
 // 		this.route = route;
 // 		this.featureServiceFile
 // 			.setFileName(getFileNameWithoutExtensionFromOpenApiRoute(route))
@@ -46,7 +46,7 @@
 //
 //
 //
-// 	// public createRequestMethod(route: string, content: Content) {
+// 	// public createGetMethod(route: string, content: Content) {
 // 	// 	this.route = route;
 // 	// 	this.featureService.setFileName(this.fileService.getFileNameWithoutExtensionFromOpenApiRoute(route))
 // 	// 	this.setFileName();
