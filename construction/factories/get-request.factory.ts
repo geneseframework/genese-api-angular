@@ -42,7 +42,10 @@ export class GetRequestFactory {
 
 
 	createMethod(method: Method, ref: string, endpoint: string, geneseMethod: GeneseMethod): void {
-		const observableType = getDataTypeNameFromRefSchema(ref);
+		let observableType = getDataTypeNameFromRefSchema(ref);
+		if  (/All/.test(geneseMethod)) {
+			observableType = `${observableType}[]`;
+		}
 		const importFrom = `${toKebabCase(observableType)}.datatype`;
 		this.geneseRequestService.addImport(observableType, `../datatypes/${importFrom}`);
 		method.setDeclaration(method.name, method.params, `Observable<${observableType}>`);
