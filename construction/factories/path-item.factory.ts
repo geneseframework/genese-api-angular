@@ -20,7 +20,8 @@ export class PathItemFactory implements InitFactoriesInterface {
 			this.requestMethodFactory.addGetRequest(route, pathItem);
 		}
 		if (pathItem?.post) {
-			this.requestMethodFactory.addPostRequest(route, pathItem);
+			const zzz = new RequestMethodFactory();
+			zzz.addPostRequest(route, pathItem);
 		}
 	}
 }

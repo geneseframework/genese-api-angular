@@ -22,6 +22,12 @@ export class FileService {
 
 
 
+	updateFile(folder, name, data): void {
+		fse.writeFileSync(this.appRoot + folder + name, data);
+	}
+
+
+
 	readFile(path: string): Promise<string> {
 		return fse.readFile(this.appRoot + path, 'utf-8');
 	}

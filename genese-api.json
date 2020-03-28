@@ -174,10 +174,52 @@
                 },
                 "responses": {
                     "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Author"
+                                },
+                                "examples": {
+                                    "New author": {
+                                        "value": {
+                                            "firstName": "some text",
+                                            "lastName": "some text",
+                                            "address": {
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
                         "description": "Creation done"
                     }
                 }
             }
+        },
+        "/author/name/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "description": "Name of the author"
+                    }
+                },
+                "description": "Get author name"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true
+                }
+            ]
         }
     },
     "components": {

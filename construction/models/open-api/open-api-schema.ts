@@ -1,5 +1,5 @@
 export class OpenApiSchema {
-	$ref: string;
+	$ref?: string;
 	additionalProperties?: boolean | OpenApiSchema;
 	allOf?: OpenApiSchema[];
 	anyOf?: OpenApiSchema[];

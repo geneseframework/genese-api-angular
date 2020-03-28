@@ -69,7 +69,7 @@ export function toKebabCase(word = ''): string {
 
 
 export function getDataTypeNameFromRefSchema(refSchema: string): string {
-	return refSchema.slice(refSchema.lastIndexOf('/') + 1);
+	return isPrimitiveType(refSchema) ? capitalize(refSchema) : refSchema.slice(refSchema.lastIndexOf('/') + 1);
 }
 
 
@@ -99,7 +99,7 @@ export function getRequestMethod(action: RestAction, endpoint: string): Method {
 	return method;
 }
 
-
-export function f() {
-
+export function isPrimitiveType(type: string): boolean {
+	return ['string', 'boolean', 'number', 'String', 'Boolean', 'Number'].includes(type);
 }
+

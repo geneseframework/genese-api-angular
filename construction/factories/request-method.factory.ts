@@ -4,7 +4,14 @@ import { Method } from '../models/files/method.model';
 import { GeneseRequestServiceFactory } from './genese-request-service.factory';
 import { ClassFile } from '../models/files/class-file.model';
 import { RestAction } from '../models/rest-action.type';
-import { getDataTypeNameFromRefSchema, getRequestMethod, toKebabCase, toPascalCase } from '../services/tools.service';
+import {
+	capitalize,
+	getDataTypeNameFromRefSchema,
+	isPrimitiveType,
+	toKebabCase,
+	toPascalCase,
+	unCapitalize
+} from '../services/tools.service';
 import { GeneseMethod } from '../models/genese-method.enum';
 import { PathItem } from '../models/open-api/path-item';
 import { OpenApiSchema } from '../models/open-api/open-api-schema';
@@ -14,11 +21,14 @@ export class RequestMethodFactory {
 
 	private action: RestAction = 'GET';
 	private content: Content = new Content();
-	private geneseRequestService = new ClassFile();
+	private dataTypeName = '';
+	private endpoint = '';
 	private fileService: FileService = new FileService();
+	private geneseMethod: GeneseMethod;
+	private geneseRequestService = new ClassFile();
 	private method: Method = new Method();
 	private pathItem: PathItem = new PathItem();
-	private route: string = '';
+	private refOrPrimitive = '';
 	private schema: OpenApiSchema = new OpenApiSchema();
 
 
@@ -28,26 +38,41 @@ export class RequestMethodFactory {
 
 
 
-	init(action: RestAction, route: string, pathItem: PathItem): RequestMethodFactory {
+	init(action: RestAction, endpoint: string, pathItem: PathItem): RequestMethodFactory {
 		this.action = action;
-		this.route = route;
+		this.endpoint = endpoint;
 		this.pathItem = pathItem;
 		return this;
 	}
 
 
 
-	addGetRequest(route: string, pathItem: PathItem): void {
-		this.init('GET', route, pathItem)
+	addGetRequest(endpoint: string, pathItem: PathItem): void {
+		this.init('GET', endpoint, pathItem)
 			.getContent()
-			.createGetMethod('GET', route, pathItem?.get?.responses?.['200']?.['content']);
+			.getSchema()
+			.addNameAndParamsToMethod()
+			.getGeneseMethod()
+			.getRefOrPrimitive()
+			.getDataTypeNameFromRefSchema()
+			.addImport()
+			.addMethodToGeneseRequestService()
+			.updateGeneseRequestService();
 	}
 
 
 
-	addPostRequest(route: string, pathItem: PathItem): void {
-		const getRequestFactory: RequestMethodFactory = new RequestMethodFactory();
-		getRequestFactory.createPostMethod('POST', route, pathItem?.post?.requestBody?.['content']);
+	addPostRequest(endpoint: string, pathItem: PathItem): void {
+		this.init('POST', endpoint, pathItem)
+			.getContent()
+			.getSchema()
+			.addNameAndParamsToMethod()
+			.getGeneseMethod()
+			.getRefOrPrimitive()
+			.getDataTypeNameFromRefSchema()
+			.addImport()
+			.addMethodToGeneseRequestService()
+			.updateGeneseRequestService();
 	}
 
 
@@ -70,82 +95,146 @@ export class RequestMethodFactory {
 
 
 	getSchema(): RequestMethodFactory {
-		const schema: any = this.content['application/json']?.schema ?? this.content['text/plain'].schema as OpenApiSchema;
-		this.schema = schema;
+		const schema: any = this.content['application/json']?.schema ?? this.content['text/plain']?.schema as OpenApiSchema;
+		this.schema = schema ?? {type: 'any'};
 		return this;
 	}
 
-	createGetMethod(action: RestAction, endpoint: string, content: Content) {
-		const method = getRequestMethod(action, endpoint);
-		if (content['application/json']?.schema || content['text/plain']?.schema) {
-			const schema: any = content['application/json']?.schema ?? content['text/plain'].schema;
-			if (schema?.$ref) {
-				this.createGetMethodWithRef(method, schema?.$ref, endpoint, GeneseMethod.GET_ONE_CUSTOM);
-			} else if (schema?.type) {
-				if (schema.type === 'array') {
-					if (schema.items.$ref) {
-						this.createGetMethodWithRef(method, schema.items.$ref, endpoint, GeneseMethod.GET_ALL_CUSTOM);
-					}
+
+
+	getGeneseMethod(): RequestMethodFactory {
+		switch (this.action) {
+			case 'GET':
+				this.geneseMethod = this.schema?.type === 'array' ? GeneseMethod.GET_ALL_CUSTOM : GeneseMethod.GET_ONE_CUSTOM;
+				break;
+			case 'POST':
+				this.geneseMethod = GeneseMethod.CREATE_CUSTOM;
+		}
+		return this;
+	}
+
+
+
+	getRefOrPrimitive(): RequestMethodFactory {
+		if (this.schema?.$ref) {
+			this.refOrPrimitive = this.schema?.$ref;
+		} else {
+			switch (this.schema?.type) {
+				case 'array':
+					this.refOrPrimitive = this.schema?.items?.$ref;
+					break;
+				case 'string':
+				case 'any':
+				case 'number':
+				case 'boolean':
+					this.refOrPrimitive = this.schema?.type;
+					break;
+				default:
+					throw 'Unknown schema type';
+			}
+		}
+		return this;
+	}
+
+
+
+	addImport(): RequestMethodFactory {
+		if (!isPrimitiveType(this.dataTypeName) && this.refOrPrimitive !== 'any') {
+			console.log('this.refOrPrimitive', this.refOrPrimitive);
+			this.geneseRequestService.addImport(this.dataTypeName, `../datatypes/${toKebabCase(this.dataTypeName)}.datatype`);
+		}
+		return this;
+	}
+
+
+
+	addMethodToGeneseRequestService(): RequestMethodFactory {
+		switch (this.action) {
+			case 'GET':
+				this.addGetMethodToGeneseRequestService();
+				break;
+			case 'POST':
+				this.addPostMethodToGeneseRequestService();
+				break;
+		}
+		return this;
+	}
+
+
+
+	addGetMethodToGeneseRequestService(): void {
+		const observableType =  (/All/.test(this.geneseMethod)) ? `${this.dataTypeName}[]` : `${this.dataTypeName}`;
+		this.method.setDeclaration(this.method.name, this.method.params, `Observable<${observableType}>`);
+		const endpointWithParams = toPascalCase(this.endpoint.replace('{', '${'));
+		const returnLine = `return this.geneseService.getGeneseInstance(${this.dataTypeName}).${this.geneseMethod}(\`${endpointWithParams}\`);`;
+		this.method.addLine(returnLine);
+		this.geneseRequestService.addMethod(this.method);
+	}
+
+
+
+	addPostMethodToGeneseRequestService(): void {
+		this.method.params = `body?: ${this.dataTypeName === 'any' ? 'any' : this.dataTypeName}`;
+		this.method.setDeclaration(this.method.name, this.method.params, `Observable<any>`);
+		const endpointWithParams = toPascalCase(this.endpoint.replace('{', '${'));
+		const geneseInstance = this.dataTypeName === 'any' ? 'undefined' : this.dataTypeName;
+		const returnLine = `return this.geneseService.getGeneseInstance(${geneseInstance}).${this.geneseMethod}(\`${endpointWithParams}\`);`;
+		this.method.addLine(returnLine);
+		this.geneseRequestService.addMethod(this.method);
+	}
+
+
+
+	addNameAndParamsToMethod(): RequestMethodFactory {
+		let methodName = '';
+		let params = '';
+		let splittedEndpoint = this.endpoint.split('/');
+		if (splittedEndpoint.length > 0) {
+			for (let i = 1; i < splittedEndpoint.length; i++) {
+				if (splittedEndpoint[i].charAt(0) === '{') {
+					const path = splittedEndpoint[i].slice(1, -1);
+					const param = toPascalCase(path);
+					methodName = `${methodName}By${param}`;
+					params = `${params}, ${param} = ''`;
+				} else {
+					methodName = `${methodName}${capitalize(splittedEndpoint[i])}`;
 				}
 			}
-		} else {
-			// TODO
 		}
-		this.fileService.createFile(`/genese/genese-api/services/`, `genese-request.service.ts`, this.geneseRequestService.content);
+		this.method.name = `${this.action.toLowerCase()}${methodName}`;
+		this.method.params = unCapitalize(params.slice(2));
+		return this;
 	}
 
 
 
-	createGetMethodWithRef(method: Method, ref: string, endpoint: string, geneseMethod: GeneseMethod): void {
-		let dataTypeName = getDataTypeNameFromRefSchema(ref);
-		const observableType =  (/All/.test(geneseMethod)) ? `${dataTypeName}[]` : `${dataTypeName}`;
-		const importFrom = `${toKebabCase(dataTypeName)}.datatype`;
-		this.geneseRequestService.addImport(dataTypeName, `../datatypes/${importFrom}`);
-		method.setDeclaration(method.name, method.params, `Observable<${observableType}>`);
-		const endpointWithParams = toPascalCase(endpoint.replace('{', '${'));
-		const returnLine = `return this.geneseService.getGeneseInstance(${dataTypeName}).${geneseMethod}(\`${endpointWithParams}\`);`;
-		method.addLine(returnLine);
-		this.geneseRequestService.addMethod(method);
+	getDataTypeNameFromRefSchema(): RequestMethodFactory {
+		this.dataTypeName = getDataTypeNameFromRefSchema(this.refOrPrimitive);
+		return this;
 	}
 
 
 
-	// ----------------------------------------------------------------------------
-	//						  Files and classes formatting
-	// ----------------------------------------------------------------------------
-
-
-
-	createPostMethod(action: RestAction, endpoint: string, content: Content): void {
-		const method: Method = getRequestMethod(action, endpoint);
-		if (content['application/json']?.schema || content['text/plain']?.schema) {
-			const schema: any = content['application/json']?.schema ?? content['text/plain'].schema;
-			if (schema?.$ref) {
-				this.createPostMethodWithRef(method, schema?.$ref, endpoint, GeneseMethod.CREATE_CUSTOM);
-			} else if (schema?.type) {
-				if (schema.type === 'array') {
-					if (schema.items.$ref) {
-						this.createPostMethodWithRef(method, schema.items.$ref, endpoint, GeneseMethod.CREATE_CUSTOM);
-					}
-				}
-			}
-		} else {
-			// TODO
-		}
-		this.fileService.createFile(`/genese/genese-api/services/`, `genese-request.service.ts`, this.geneseRequestService.content);
+	updateGeneseRequestService() {
+		this.fileService.updateFile(`/genese/genese-api/services/`, `genese-request.service.ts`, this.geneseRequestService.content);
 	}
 
-
-
-	createPostMethodWithRef(method: Method, ref: string, endpoint: string, geneseMethod: GeneseMethod): void {
-		let dataTypeName = getDataTypeNameFromRefSchema(ref);
-		method.params = 'body?: any';
-		const importFrom = `${toKebabCase(dataTypeName)}.datatype`;
-		this.geneseRequestService.addImport(dataTypeName, `../datatypes/${importFrom}`);
-		method.setDeclaration(method.name, method.params, `Observable<any>`);
-		const endpointWithParams = toPascalCase(endpoint.replace('{', '${'));
-		const returnLine = `return this.geneseService.getGeneseInstance(${dataTypeName}).${geneseMethod}(\`${endpointWithParams}\`);`;
-		method.addLine(returnLine);
-		this.geneseRequestService.addMethod(method);
-	}
+	// createPostMethod(action: RestAction, endpoint: string, content: Content): void {
+	// 	const method: Method = getRequestMethod(action, endpoint);
+	// 	if (content['application/json']?.schema || content['text/plain']?.schema) {
+	// 		const schema: any = content['application/json']?.schema ?? content['text/plain'].schema;
+	// 		if (schema?.$ref) {
+	// 			this.createPostMethodWithRef(method, schema?.$ref, endpoint, GeneseMethod.CREATE_CUSTOM);
+	// 		} else if (schema?.type) {
+	// 			if (schema.type === 'array') {
+	// 				if (schema.items.$ref) {
+	// 					this.createPostMethodWithRef(method, schema.items.$ref, endpoint, GeneseMethod.CREATE_CUSTOM);
+	// 				}
+	// 			}
+	// 		}
+	// 	} else {
+	// 		// TODO
+	// 	}
+	// 	this.fileService.createFile(`/genese/genese-api/services/`, `genese-request.service.ts`, this.geneseRequestService.content);
+	// }
 }
