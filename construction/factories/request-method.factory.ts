@@ -6,12 +6,20 @@ import { ClassFile } from '../models/files/class-file.model';
 import { RestAction } from '../models/rest-action.type';
 import { getDataTypeNameFromRefSchema, getRequestMethod, toKebabCase, toPascalCase } from '../services/tools.service';
 import { GeneseMethod } from '../models/genese-method.enum';
+import { PathItem } from '../models/open-api/path-item';
+import { OpenApiSchema } from '../models/open-api/open-api-schema';
 
 
-export class GetRequestFactory {
+export class RequestMethodFactory {
 
+	private action: RestAction = 'GET';
+	private content: Content = new Content();
 	private geneseRequestService = new ClassFile();
 	private fileService: FileService = new FileService();
+	private method: Method = new Method();
+	private pathItem: PathItem = new PathItem();
+	private route: string = '';
+	private schema: OpenApiSchema = new OpenApiSchema();
 
 
 	constructor() {
@@ -19,6 +27,53 @@ export class GetRequestFactory {
 	}
 
 
+
+	init(action: RestAction, route: string, pathItem: PathItem): RequestMethodFactory {
+		this.action = action;
+		this.route = route;
+		this.pathItem = pathItem;
+		return this;
+	}
+
+
+
+	addGetRequest(route: string, pathItem: PathItem): void {
+		this.init('GET', route, pathItem)
+			.getContent()
+			.createGetMethod('GET', route, pathItem?.get?.responses?.['200']?.['content']);
+	}
+
+
+
+	addPostRequest(route: string, pathItem: PathItem): void {
+		const getRequestFactory: RequestMethodFactory = new RequestMethodFactory();
+		getRequestFactory.createPostMethod('POST', route, pathItem?.post?.requestBody?.['content']);
+	}
+
+
+
+	getContent(): RequestMethodFactory {
+		switch (this.action) {
+			case 'GET':
+				this.content = this.pathItem?.get?.responses?.['200']?.['content'];
+				break;
+			case 'POST':
+				this.content = this.pathItem?.post?.requestBody?.['content'];
+				break;
+			default: {
+				throw 'Incorrect http action verb';
+			}
+		}
+		return this;
+	}
+
+
+
+	getSchema(): RequestMethodFactory {
+		const schema: any = this.content['application/json']?.schema ?? this.content['text/plain'].schema as OpenApiSchema;
+		this.schema = schema;
+		return this;
+	}
 
 	createGetMethod(action: RestAction, endpoint: string, content: Content) {
 		const method = getRequestMethod(action, endpoint);

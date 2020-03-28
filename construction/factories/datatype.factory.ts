@@ -1,8 +1,8 @@
 import { Property } from '../models/files/property.model';
-import { Schema } from '../models/open-api/schema';
 import { FileService } from '../services/file.service';
 import { ClassFile } from '../models/files/class-file.model';
 import { getDataTypeNameFromRefSchema, toKebabCase } from '../services/tools.service';
+import { OpenApiSchema } from '../models/open-api/open-api-schema';
 
 export class DatatypeFactory {
 
@@ -13,7 +13,7 @@ export class DatatypeFactory {
 	}
 
 
-	create(dataTypeName: string, schema: Schema) {
+	create(dataTypeName: string, schema: OpenApiSchema) {
 		this.classFile
 			.setFileName(`${toKebabCase(dataTypeName)}.datatype.ts`)
 			.setFolder(`/genese/genese-api/datatypes/`)
@@ -24,7 +24,7 @@ export class DatatypeFactory {
 
 
 
-	addPropertiesAndImports(dataTypeName: string, schema: Schema): void {
+	addPropertiesAndImports(dataTypeName: string, schema: OpenApiSchema): void {
 		if (schema.properties) {
 			for (let propertyName of Object.keys(schema.properties)) {
 				this.classFile.addProperty(`public ${propertyName} ?= ${this.addDefaultValueAndImport(dataTypeName, schema.properties[propertyName])};`);

@@ -1,7 +1,7 @@
 import { InitFactoriesInterface } from './init-factories.interface';
 import { OpenApiService } from '../services/open-api.service';
 import { DatatypeFactory } from './datatype.factory';
-import { Schema } from '../models/open-api/schema';
+import { OpenApiSchema } from '../models/open-api/open-api-schema';
 
 
 export class SchemasFactory implements InitFactoriesInterface {
@@ -23,7 +23,7 @@ export class SchemasFactory implements InitFactoriesInterface {
 
 
 
-	createDataTypes(schemas: Schema[]): void {
+	createDataTypes(schemas: OpenApiSchema[]): void {
 		for (const dataTypeName of Object.keys(schemas)) {
 			const dataTypeFactory = new DatatypeFactory();
 			dataTypeFactory.create(dataTypeName, schemas[dataTypeName]);

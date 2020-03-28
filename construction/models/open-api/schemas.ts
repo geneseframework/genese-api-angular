@@ -1,6 +1,6 @@
-import { Schema } from './schema';
 import { Reference } from './reference';
+import { OpenApiSchema } from './open-api-schema';
 
 export class Schemas {
-	[key: string]: Schema | Reference;
+	[key: string]: OpenApiSchema | Reference;
 }

@@ -11,7 +11,7 @@
 //
 // // TODO : Keep this file for now. Delete it if you're sure to never want to createGetMethod service files for each request method
 //
-// export class GetRequestFactory {
+// export class RequestMethodFactory {
 //
 // 	private featureServiceFile = new ClassFile();
 // 	// private className = '';

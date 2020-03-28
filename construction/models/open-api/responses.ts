@@ -4,5 +4,8 @@ import { Response } from './response';
 export class Responses {
 	// default?: Response | Reference;
 	// [key: string]: Response;
-	[key: string]: Response | Reference;
+	[responseCode: string]: Response | Reference;
 }
+
+export const RESPONSE_CODE = /[2345][0-9]{2}/;
+
