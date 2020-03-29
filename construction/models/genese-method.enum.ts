@@ -1,5 +1,7 @@
 export enum GeneseMethod {
-	GET_ONE_CUSTOM = 'getOneCustom',
-	GET_ALL_CUSTOM = 'getAllCustom',
-	CREATE_CUSTOM = 'createCustom'
+	CREATE = 'createCustom',
+	DELETE = 'deleteCustom',
+	GET_ALL = 'getAllCustom',
+	GET_ONE = 'getOneCustom',
+	PUT = 'updateCustom'
 }

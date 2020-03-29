@@ -24,7 +24,7 @@ export function toCamelCase(word = ''): string {
 			formattedText += word.charAt(i);
 		}
 	}
-	return formattedText;
+	return unCapitalize(formattedText);
 }
 
 

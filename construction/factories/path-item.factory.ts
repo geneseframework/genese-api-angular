@@ -21,5 +21,14 @@ export class PathItemFactory implements InitFactoriesInterface {
 		if (pathItem?.post) {
 			new RequestMethodFactory().addRequestMethod('POST', route, pathItem);
 		}
+		if (pathItem?.delete) {
+			new RequestMethodFactory().addRequestMethod('DELETE', route, pathItem);
+		}
+		if (pathItem?.put) {
+			new RequestMethodFactory().addRequestMethod('PUT', route, pathItem);
+		}
+		if (pathItem?.patch) {
+			new RequestMethodFactory().addRequestMethod('PATCH', route, pathItem);
+		}
 	}
 }
