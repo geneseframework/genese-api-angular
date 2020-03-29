@@ -58,7 +58,7 @@
 // 	// 	for (const mediaType of Object.keys(content)) {
 // 	// 		this.addMediaTypes(content[mediaType]);
 // 	// 	}
-// 	// 	this.fileService.createFile('/genese/genese-api/services/', `${this.featureService.fileName}.service.ts`, this.featureService.getContent());
+// 	// 	this.fileService.createFile('/genese/genese-api/services/', `${this.featureService.fileName}.service.ts`, this.featureService.getContentFromPathItem());
 // 	// 	this.addMethodToGeneseRequestService();
 // 	// }
 //

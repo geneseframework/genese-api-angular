@@ -21,7 +21,6 @@ export class GeneseRequestServiceFactory {
 		this.addImports();
 		this.addDeclaration();
 		this.addConstructor();
-		// console.log('GRSF this.classFile.content', this.classFile.content);
 	}
 
 

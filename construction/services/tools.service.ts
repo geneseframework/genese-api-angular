@@ -72,33 +72,6 @@ export function getDataTypeNameFromRefSchema(refSchema: string): string {
 	return isPrimitiveType(refSchema) ? capitalize(refSchema) : refSchema.slice(refSchema.lastIndexOf('/') + 1);
 }
 
-
-
-export function getRequestMethod(action: RestAction, endpoint: string): Method {
-	if (!endpoint || !action) {
-		throw 'No action or endpoint : impossible to createGetMethod request method';
-	}
-	let method: Method = new Method();
-	let methodName = '';
-	let params = '';
-	let splittedEndpoint = endpoint.split('/');
-	if (splittedEndpoint.length > 0) {
-		for (let i = 1; i < splittedEndpoint.length; i++) {
-			if (splittedEndpoint[i].charAt(0) === '{') {
-				const path = splittedEndpoint[i].slice(1, -1);
-				const param = toPascalCase(path);
-				methodName = `${methodName}By${param}`;
-				params = `${params}, ${param} = ''`;
-			} else {
-				methodName = `${methodName}${capitalize(splittedEndpoint[i])}`;
-			}
-		}
-	}
-	method.name = `${action.toLowerCase()}${methodName}`;
-	method.params = unCapitalize(params.slice(2));
-	return method;
-}
-
 export function isPrimitiveType(type: string): boolean {
 	return ['string', 'boolean', 'number', 'String', 'Boolean', 'Number'].includes(type);
 }
