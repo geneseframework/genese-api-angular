@@ -35,7 +35,7 @@ export class GeneseRequestServiceFactory {
 		this.classFile.addImport('Observable', 'rxjs');
 		this.classFile.addImport('HttpClient', '@angular/common/http');
 		this.classFile.addImport('Injectable', '@angular/core');
-		this.classFile.addImport('GeneseService', 'genese-angular');
+		this.classFile.addImport('GeneseService, RequestOptions', 'genese-angular');
 	}
 
 

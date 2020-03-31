@@ -1,0 +1,445 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "genese-api",
+        "version": "1.0.0",
+        "description": "DTO generator"
+    },
+    "paths": {
+        "/books": {
+            "summary": "Books",
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Book"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "List of Books"
+                    }
+                },
+                "description": "Get all API"
+            },
+            "post": {
+                "requestBody": {
+                    "description": "Post Book DTO",
+                    "content": {
+                        "application/json": {
+
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+
+                            }
+                        },
+                        "description": "Book created"
+                    }
+                },
+                "description": "Creates a Book"
+            }
+        },
+        "/books/{bookId}": {
+            "summary": "Path used to manage a single Book.",
+            "description": "The REST endpoint/path used to get, update, and delete single instances of an `Book`.  This path contains `GET`, `PUT`, and `DELETE` operations used to perform the get, update, and delete tasks, respectively.",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Book"
+                                }
+                            }
+                        },
+                        "description": "Successful response - returns a single `Book`."
+                    }
+                },
+                "operationId": "getBook",
+                "summary": "Get a Book",
+                "description": "Gets the details of a single instance of a `Book`."
+            },
+            "put": {
+                "requestBody": {
+                    "description": "Updated `Book` information.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Book"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "202": {
+                        "description": "Successful response."
+                    }
+                },
+                "operationId": "updateBook",
+                "summary": "Update a Book",
+                "description": "Updates an existing `Book`."
+            },
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "Successful response."
+                    }
+                },
+                "operationId": "deleteBook",
+                "summary": "Delete a Book",
+                "description": "Deletes an existing `Book`."
+            },
+            "parameters": [
+                {
+                    "name": "bookId",
+                    "description": "A unique identifier for a `Book`.",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        },
+        "/authors": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Author"
+                                    }
+                                },
+                                "examples": {
+                                    "authors": {
+                                        "value": [
+                                            {
+                                                "firstName": "some text",
+                                                "lastName": "some text",
+                                                "address": {
+
+                                                }
+                                            },
+                                            {
+                                                "firstName": "some text",
+                                                "lastName": "some text",
+                                                "address": {
+
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Get all authors"
+                    }
+                }
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthorPost"
+                            },
+                            "examples": {
+                                "New author": {
+                                    "value": {
+                                        "firstname": "some text",
+                                        "lastname": "some text"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Author"
+                                },
+                                "examples": {
+                                    "New author": {
+                                        "value": {
+                                            "firstName": "some text",
+                                            "lastName": "some text",
+                                            "address": {
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Creation done"
+                    }
+                }
+            }
+        },
+        "/author/name/{id}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "description": "Name of the author"
+                    }
+                },
+                "description": "Get author name"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true
+                }
+            ]
+        }
+    },
+    "components": {
+        "schemas": {
+            "Category": {
+                "description": "Books's categories",
+                "enum": [
+                    "",
+                    "novels",
+                    "science-fiction"
+                ],
+                "type": "string"
+            },
+            "ArrayOfStrings": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "arrayOfStrings": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "CodeNumberAndString": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "codeNumber": {
+                        "description": "",
+                        "type": "integer"
+                    },
+                    "codeString": {
+                        "description": "",
+                        "type": "string"
+                    }
+                }
+            },
+            "Edition": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "",
+                        "type": "string"
+                    }
+                }
+            },
+            "Place": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "city": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "country": {
+                        "description": "",
+                        "type": "string"
+                    }
+                }
+            },
+            "GnIndexableTypeString": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "gnIndexableType": {
+                        "description": "",
+                        "type": "string"
+                    }
+                }
+            },
+            "GnIndexableTypeNumber": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "gnIndexableType": {
+                        "description": "",
+                        "type": "number"
+                    }
+                }
+            },
+            "Author": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "firstName": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "address": {
+                        "description": ""
+                    }
+                },
+                "example": {
+                    "firstName": "some text",
+                    "lastName": "some text",
+                    "address": {
+                        "town": "Montpellier",
+                        "zipCode": "34000"
+                    }
+                }
+            },
+            "Book": {
+                "title": "Root Type for Book",
+                "description": "Book DTO",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "author": {
+                        "$ref": "#/components/schemas/Author"
+                    },
+                    "available": {
+                        "description": "Check if book is available",
+                        "type": "boolean"
+                    },
+                    "title": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "codeArrayOfArraysOfStrings": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "codeArrayOfArraysOfObjects": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CodeNumberAndString"
+                        }
+                    },
+                    "codeNumbers": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        }
+                    },
+                    "description": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "editions": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Edition"
+                        }
+                    },
+                    "editor": {
+                        "$ref": "#/components/schemas/Editor"
+                    },
+                    "librariesClassification": {
+                        "description": "gnIndexableType",
+                        "type": "string"
+                    },
+                    "librariesRate": {
+                        "description": "gnIndexableType",
+                        "type": "number"
+                    },
+                    "year": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "categories": {
+                        "description": "",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Category"
+                        }
+                    }
+                },
+                "example": {
+                    "id": 0,
+                    "author": "Isaac Asimov"
+                }
+            },
+            "Editor": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "place": {
+                        "$ref": "#/components/schemas/Place"
+                    }
+                }
+            },
+            "AuthorPost": {
+                "title": "Root Type for AuthorPost",
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "firstname": {
+                        "description": "firstname of the author",
+                        "maxLength": 10,
+                        "type": "string"
+                    },
+                    "lastname": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "firstname": "John",
+                    "lastname": "Doe"
+                }
+            }
+        }
+    }
+}

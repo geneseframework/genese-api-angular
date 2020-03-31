@@ -95,7 +95,7 @@ export class RequestMethodFactory {
 	getGeneseMethod(): RequestMethodFactory {
 		switch (this.action) {
 			case 'GET':
-				this.geneseMethod = this.schema?.type === 'array' ? GeneseMethod.GET_ALL : GeneseMethod.GET_ONE;
+				this.geneseMethod = this.schema?.type === 'array' ? GeneseMethod.GET : GeneseMethod.GET_ONE;
 				break;
 			case 'POST':
 				this.geneseMethod = GeneseMethod.CREATE;
@@ -118,10 +118,13 @@ export class RequestMethodFactory {
 					this.refOrPrimitive = this.schema?.items?.$ref;
 					break;
 				case 'string':
-				case 'any':
 				case 'number':
 				case 'boolean':
 					this.refOrPrimitive = this.schema?.type;
+					break;
+				case 'any':
+					// TODO : remove with genese-angular 1.2
+					this.refOrPrimitive = 'String';
 					break;
 				default:
 					throw 'Unknown schema type';
@@ -166,33 +169,39 @@ export class RequestMethodFactory {
 
 	setDeclarationAndGetBodyOfDeleteRequestMethod(): string {
 		this.method.setDeclaration(this.method.name, this.method.params, `Observable<any>`);
-		return `return this.geneseService.getGeneseInstance(undefined).${GeneseMethod.DELETE}(\`${this.endPointWithParams}\`);`;
+		// TODO : refacto this line with genese-angular 1.2 (remove String)
+		return `return this.geneseService.getGeneseInstance(String).${GeneseMethod.DELETE}(\`${this.endPointWithParams}\`);`;
 	}
 
 
 
 	setDeclarationAndGetBodyOfGetRequestMethod(): string {
-		const observableType =  (this.geneseMethod === GeneseMethod.GET_ALL) ? `${this.dataTypeName}[]` : `${this.dataTypeName}`;
-		this.method.setDeclaration(this.method.name, this.method.params, `Observable<${observableType}>`);
-		return `return this.geneseService.getGeneseInstance(${this.dataTypeName}).${this.geneseMethod}(\`${this.endPointWithParams}\`);`;
+		if (this.geneseMethod === GeneseMethod.GET) {
+			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.dataTypeName}[]>`);
+			return `return this.geneseService.getGeneseInstance(${this.dataTypeName}).${this.geneseMethod}(\`${this.endPointWithParams}\`, options);`;
+		} else {
+			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.dataTypeName}>`);
+			return `return this.geneseService.getGeneseInstance(${this.dataTypeName}).${this.geneseMethod}(\`${this.endPointWithParams}\`);`;
+		}
 	}
 
 
 
 	setDeclarationAndGetBodyOfPostRequestMethod(): string {
-		this.method.params += `body?: ${this.dataTypeName === 'any' ? 'any' : this.dataTypeName}`;
+		this.method.params = `body?: ${this.dataTypeName === 'any' ? 'any' : this.dataTypeName}, ${this.method.params}`;
 		this.method.setDeclaration(this.method.name, this.method.params, `Observable<any>`);
-		const geneseInstance = this.dataTypeName === 'any' ? 'undefined' : this.dataTypeName;
-		return `return this.geneseService.getGeneseInstance(${geneseInstance}).${this.geneseMethod}(\`${this.endPointWithParams}\`, body);`;
+		// TODO : refacto this line with genese-angular 1.2 (remove String)
+		const geneseInstance = this.dataTypeName === 'any' ? 'String' : this.dataTypeName;
+		return `return this.geneseService.getGeneseInstance(${geneseInstance}).${this.geneseMethod}(\`${this.endPointWithParams}\`, body, options);`;
 	}
 
 
 
 	setDeclarationAndGetBodyOfPutRequestMethod(): string {
-		this.method.params = this.method.params ? `${this.method.params}, ` : this.method.params;
-		this.method.params = `${this.method.params}${toCamelCase(this.dataTypeName)}: ${this.dataTypeName}`;
+		// this.method.params = this.method.params ? `${this.method.params}, ` : this.method.params;
+		this.method.params = `${toCamelCase(this.dataTypeName)}: ${this.dataTypeName}, ${this.method.params}`;
 		this.method.setDeclaration(this.method.name, this.method.params, `Observable<any>`);
-		return `return this.geneseService.getGeneseInstance(undefined).${GeneseMethod.PUT}(\`${this.endPointWithParams}\`, ${toCamelCase(this.dataTypeName)});`;
+		return `return this.geneseService.getGeneseInstance(String).${GeneseMethod.PUT}(\`${this.endPointWithParams}\`, ${toCamelCase(this.dataTypeName)}, options);`;
 	}
 
 
@@ -214,7 +223,7 @@ export class RequestMethodFactory {
 			}
 		}
 		this.method.name = `${this.action.toLowerCase()}${methodName}`;
-		this.method.params = unCapitalize(params.slice(2));
+		this.method.params = params ? `${unCapitalize(params.slice(2))}, options?: RequestOptions` : `options?: RequestOptions`;
 		return this;
 	}
 
