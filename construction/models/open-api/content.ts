@@ -4,6 +4,12 @@ export class Content {
 	[contentType: string]: MediaType;
 }
 
+export interface ContentResponse {
+	code: string;
+	content: Content;
+}
+
+
 export enum CONTENT_TYPE {
 	ALL = '*/*',
 	JSON = 'application/json',
