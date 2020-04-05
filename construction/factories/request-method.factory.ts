@@ -16,20 +16,29 @@ import { GeneseMethod } from '../models/genese-method.enum';
 import { PathItem } from '../models/open-api/path-item';
 import { OpenApiSchema } from '../models/open-api/open-api-schema';
 
+export interface SideProperties {
+	content?: Content,
+	dataTypeName?: string,
+	schema?: OpenApiSchema,
+	refOrPrimitive?: string
+}
+
+export enum SideRequest {
+	CLIENT = 'clientSide',
+	SERVER = 'serverSide'
+}
 
 export class RequestMethodFactory {
 
 	private action: RequestMethod = RequestMethod.GET;
-	private content: Content = new Content();
-	private dataTypeName = '';
+	private clientSide: SideProperties = {};
 	private endpoint = '';
 	private fileService: FileService = new FileService();
 	private geneseMethod: GeneseMethod;
 	private geneseRequestService = new ClassFile();
 	private method: Method = new Method();
 	private pathItem: PathItem = new PathItem();
-	private refOrPrimitive = '';
-	private schema: OpenApiSchema = new OpenApiSchema();
+	private serverSide: SideProperties = {};
 
 
 	constructor() {
@@ -40,16 +49,21 @@ export class RequestMethodFactory {
 
 	addRequestMethod(action: RequestMethod, endpoint: string, pathItem: PathItem): void {
 		this.init(action, endpoint, pathItem)
-			.getContentFromPathItem()
-			.getSchemaFromContent()
-			.addNameAndParamsToMethod()
 			.getGeneseMethod()
-			.getRefOrPrimitive()
-			.getDataTypeNameFromRefSchema()
-			.addImport()
+			.addNameAndParamsToMethod()
+			.getContentsFromPathItem()
+			.addProperties(SideRequest.CLIENT)
+			.addProperties(SideRequest.SERVER)
 			.addMethodToGeneseRequestService()
 			.updateGeneseRequestService();
 	}
+
+
+
+	// ----------------------------------------------------------------------------
+	//		      Creates request method and get contents from pathItem
+	// ----------------------------------------------------------------------------
+
 
 
 
@@ -62,41 +76,10 @@ export class RequestMethodFactory {
 
 
 
-	getContentFromPathItem(): RequestMethodFactory {
-		switch (this.action) {
-			case RequestMethod.DELETE:
-				this.content = undefined;
-				break;
-			case RequestMethod.GET:
-				this.content = this.pathItem?.get?.responses?.['200']?.['content'];
-				break;
-			case RequestMethod.PATCH:
-			case RequestMethod.POST:
-			case RequestMethod.PUT:
-				this.content = this.pathItem?.[this.action.toLowerCase()]?.requestBody?.['content'];
-				break;
-			default: {
-				throw 'Incorrect http action verb';
-			}
-		}
-		return this;
-	}
-
-
-
-	getSchemaFromContent(): RequestMethodFactory {
-		const schema: any = this.content?.['application/json']?.schema ?? this.content?.['text/plain']?.schema as OpenApiSchema;
-		// console.log('SCHEMA schema', schema);
-		this.schema = schema ?? {type: 'any'};
-		return this;
-	}
-
-
-
 	getGeneseMethod(): RequestMethodFactory {
 		switch (this.action) {
 			case RequestMethod.GET:
-				this.geneseMethod = this.schema?.type === 'array' ? GeneseMethod.GET : GeneseMethod.GET_ONE;
+				this.geneseMethod = this.serverSide.schema?.type === 'array' ? GeneseMethod.GET : GeneseMethod.GET_ONE;
 				break;
 			case RequestMethod.POST:
 				this.geneseMethod = GeneseMethod.POST;
@@ -110,41 +93,106 @@ export class RequestMethodFactory {
 
 
 
-	getRefOrPrimitive(): RequestMethodFactory {
-		if (this.schema?.$ref) {
-			this.refOrPrimitive = this.schema?.$ref;
-		} else {
-			switch (this.schema?.type) {
-				case 'array':
-					this.refOrPrimitive = this.schema?.items?.$ref;
-					break;
-				case 'string':
-				case 'number':
-				case 'boolean':
-				case 'any':
-					this.refOrPrimitive = this.schema?.type;
-					break;
-				// case 'any':
-				// 	console.log('REF OR PRIMITIVE this.schema', this.schema);
-				// 	TODO : remove with genese-angular 1.2
-					// this.refOrPrimitive = 'undefined';
-					// break;
-				default:
-					throw 'Unknown schema type';
+	addNameAndParamsToMethod(): RequestMethodFactory {
+		let methodName = '';
+		let params = '';
+		let splittedEndpoint = this.endpoint.split('/');
+		if (splittedEndpoint.length > 0) {
+			for (let i = 1; i < splittedEndpoint.length; i++) {
+				if (splittedEndpoint[i].charAt(0) === '{') {
+					const path = splittedEndpoint[i].slice(1, -1);
+					const param = toPascalCase(path);
+					methodName = `${methodName}By${param}`;
+					params = `${params}, ${param} = ''`;
+				} else {
+					methodName = `${methodName}${capitalize(splittedEndpoint[i])}`;
+				}
 			}
-			// console.log('REF OR PRIMITIVE this.refOrPrimitive', this.refOrPrimitive);
+		}
+		this.method.name = `${this.action.toLowerCase()}${methodName}`;
+		this.method.params = params ? `${unCapitalize(params.slice(2))}, options?: RequestOptions` : `options?: RequestOptions`;
+		return this;
+	}
+
+
+
+	getContentsFromPathItem(): RequestMethodFactory {
+		this.clientSide.content = this.pathItem?.[this.action.toLowerCase()]?.requestBody?.['content'];
+		this.serverSide.content = this.pathItem?.[this.action.toLowerCase()]?.responses?.['200']?.['content'];
+		return this;
+	}
+
+
+
+	// ----------------------------------------------------------------------------
+	//		Add properties from client side and server side informations
+	// ----------------------------------------------------------------------------
+
+
+
+
+	addProperties(side: SideRequest): RequestMethodFactory {
+		this.getSchemaFromContent(side)
+			.getRefOrPrimitive(side)
+			.getDataTypeNameFromRefSchema(side)
+			.addImport(side);
+		return this;
+	}
+
+
+
+	getSchemaFromContent(side: SideRequest): RequestMethodFactory {
+		let schema: any = this[side]?.content?.['application/json']?.schema ?? this[side]?.['text/plain']?.schema as OpenApiSchema;
+		this[side].schema = schema ?? {type: 'any'};
+		return this;
+	}
+
+
+
+	getRefOrPrimitive(side: SideRequest): RequestMethodFactory {
+		if (this[side].schema) {
+			if (this[side].schema?.$ref) {
+				this[side].refOrPrimitive = this[side].schema?.$ref;
+			} else {
+				switch (this[side].schema?.type) {
+					case 'array':
+						this[side].refOrPrimitive = this[side].schema?.items?.$ref;
+						break;
+					case 'string':
+					case 'number':
+					case 'boolean':
+					case 'any':
+						this[side].refOrPrimitive = this[side].schema?.type;
+						break;
+					default:
+						throw Error('Incorrect schema type');
+				}
+			}
 		}
 		return this;
 	}
 
 
 
-	addImport(): RequestMethodFactory {
-		if (!isPrimitiveType(this.dataTypeName) && this.refOrPrimitive !== 'any') {
-			this.geneseRequestService.addImport(this.dataTypeName, `../datatypes/${toKebabCase(this.dataTypeName)}.datatype`);
+	addImport(side: SideRequest): RequestMethodFactory {
+		if (!isPrimitiveType(this[side].dataTypeName) && this[side].refOrPrimitive !== 'any') {
+			this.geneseRequestService.addImport(this[side].dataTypeName, `../datatypes/${toKebabCase(this[side].dataTypeName)}.datatype`);
 		}
 		return this;
 	}
+
+
+
+	getDataTypeNameFromRefSchema(side: SideRequest): RequestMethodFactory {
+		this[side].dataTypeName = getDataTypeNameFromRefSchema(this[side].refOrPrimitive);
+		return this;
+	}
+
+
+
+	// ----------------------------------------------------------------------------
+	//					   Add method to GeneseRequestService
+	// ----------------------------------------------------------------------------
 
 
 
@@ -181,19 +229,19 @@ export class RequestMethodFactory {
 
 	setDeclarationAndGetBodyOfGetRequestMethod(): string {
 		if (this.geneseMethod === GeneseMethod.GET) {
-			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.dataTypeName}[]>`);
-			return `return this.geneseService.getGeneseInstance(${this.geneseInstance}).${this.geneseMethod}(\`${this.endPointWithParams}\`, options);`;
+			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.serverSide.dataTypeName}[]>`);
+			return `return this.geneseService.getGeneseInstance(${this.serverSide.dataTypeName}).${this.geneseMethod}(\`${this.endPointWithParams}\`, options);`;
 		} else {
-			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.dataTypeName}>`);
-			return `return this.geneseService.getGeneseInstance(${this.geneseInstance}).${this.geneseMethod}(\`${this.endPointWithParams}\`);`;
+			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.serverSide.dataTypeName}>`);
+			return `return this.geneseService.getGeneseInstance(${this.serverSide.dataTypeName}).${this.geneseMethod}(\`${this.endPointWithParams}\`);`;
 		}
 	}
 
 
 
 	setDeclarationAndGetBodyOfPostRequestMethod(): string {
-		this.method.params = `body?: ${this.geneseInstance}, ${this.method.params}`;
-		this.method.setDeclaration(this.method.name, this.method.params, `Observable<any>`);
+		this.method.params = `body?: ${this.clientSide.dataTypeName}, ${this.method.params}`;
+		this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.serverSide.dataTypeName}>`);
 		// TODO : refacto this line with genese-angular 1.2 (remove String)
 		return `return this.geneseService.instance().${this.geneseMethod}(\`${this.endPointWithParams}\`, body, options);`;
 	}
@@ -201,40 +249,9 @@ export class RequestMethodFactory {
 
 
 	setDeclarationAndGetBodyOfPutRequestMethod(): string {
-		this.method.params = `body?: ${this.dataTypeName === 'any' ? 'any' : this.dataTypeName}, ${this.method.params}`;
-		console.log('setDeclarationAndGetBodyOfPutRequestMethod this.method.name', this.method.name);
-		this.method.setDeclaration(this.method.name, this.method.params, `Observable<any>`);
+		this.method.params = `body?: ${this.clientSide.dataTypeName === 'any' ? 'any' : this.clientSide.dataTypeName}, ${this.method.params}`;
+		this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.serverSide.dataTypeName}>`);
 		return `return this.geneseService.getGeneseInstance(undefined).${GeneseMethod.PUT}(\`${this.endPointWithParams}\`, body, options);`;
-	}
-
-
-
-	addNameAndParamsToMethod(): RequestMethodFactory {
-		let methodName = '';
-		let params = '';
-		let splittedEndpoint = this.endpoint.split('/');
-		if (splittedEndpoint.length > 0) {
-			for (let i = 1; i < splittedEndpoint.length; i++) {
-				if (splittedEndpoint[i].charAt(0) === '{') {
-					const path = splittedEndpoint[i].slice(1, -1);
-					const param = toPascalCase(path);
-					methodName = `${methodName}By${param}`;
-					params = `${params}, ${param} = ''`;
-				} else {
-					methodName = `${methodName}${capitalize(splittedEndpoint[i])}`;
-				}
-			}
-		}
-		this.method.name = `${this.action.toLowerCase()}${methodName}`;
-		this.method.params = params ? `${unCapitalize(params.slice(2))}, options?: RequestOptions` : `options?: RequestOptions`;
-		return this;
-	}
-
-
-
-	getDataTypeNameFromRefSchema(): RequestMethodFactory {
-		this.dataTypeName = getDataTypeNameFromRefSchema(this.refOrPrimitive);
-		return this;
 	}
 
 
@@ -247,11 +264,5 @@ export class RequestMethodFactory {
 
 	get endPointWithParams(): string {
 		return toPascalCase(this.endpoint.replace('{', '${'));
-	}
-
-
-
-	get geneseInstance(): string {
-		return this.dataTypeName === 'any' ? 'undefined' : this.dataTypeName;
 	}
 }

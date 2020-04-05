@@ -65,7 +65,7 @@ export function toKebabCase(word = ''): string {
 
 
 
-export function getDataTypeNameFromRefSchema(refSchema: string): string {
+export function getDataTypeNameFromRefSchema(refSchema = ''): string {
 	return isPrimitiveType(refSchema) ? capitalize(refSchema) : refSchema.slice(refSchema.lastIndexOf('/') + 1);
 }
 
