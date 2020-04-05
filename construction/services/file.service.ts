@@ -1,7 +1,3 @@
-import { capitalize, toKebabCase, unCapitalize } from './tools.service';
-import { RestAction } from '../models/rest-action.type';
-import { Method } from '../models/files/method.model';
-
 const fse = require('fs-extra');
 const appRootPath = require('app-root-path');
 
