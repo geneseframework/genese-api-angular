@@ -49,11 +49,11 @@ export class RequestMethodFactory {
 
 	addRequestMethod(action: RequestMethod, endpoint: string, pathItem: PathItem): void {
 		this.init(action, endpoint, pathItem)
-			.getGeneseMethod()
 			.addNameAndParamsToMethod()
 			.getContentsFromPathItem()
 			.addProperties(SideRequest.CLIENT)
 			.addProperties(SideRequest.SERVER)
+			.getGeneseMethod()
 			.addMethodToGeneseRequestService()
 			.updateGeneseRequestService();
 	}
@@ -73,24 +73,6 @@ export class RequestMethodFactory {
 		this.pathItem = pathItem;
 		return this;
 	}
-
-
-
-	getGeneseMethod(): RequestMethodFactory {
-		switch (this.action) {
-			case RequestMethod.GET:
-				this.geneseMethod = this.serverSide.schema?.type === 'array' ? GeneseMethod.GET : GeneseMethod.GET_ONE;
-				break;
-			case RequestMethod.POST:
-				this.geneseMethod = GeneseMethod.POST;
-				break;
-			case RequestMethod.PUT:
-				this.geneseMethod = GeneseMethod.PUT;
-				break;
-		}
-		return this;
-	}
-
 
 
 	addNameAndParamsToMethod(): RequestMethodFactory {
@@ -193,6 +175,24 @@ export class RequestMethodFactory {
 	// ----------------------------------------------------------------------------
 	//					   Add method to GeneseRequestService
 	// ----------------------------------------------------------------------------
+
+
+
+
+	getGeneseMethod(): RequestMethodFactory {
+		switch (this.action) {
+			case RequestMethod.GET:
+				this.geneseMethod = this.serverSide.schema?.type === 'array' ? GeneseMethod.GET : GeneseMethod.GET_ONE;
+				break;
+			case RequestMethod.POST:
+				this.geneseMethod = GeneseMethod.POST;
+				break;
+			case RequestMethod.PUT:
+				this.geneseMethod = GeneseMethod.PUT;
+				break;
+		}
+		return this;
+	}
 
 
 
