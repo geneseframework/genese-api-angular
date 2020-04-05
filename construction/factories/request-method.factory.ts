@@ -3,11 +3,11 @@ import { FileService } from '../services/file.service';
 import { Method } from '../models/files/method.model';
 import { GeneseRequestServiceFactory } from './genese-request-service.factory';
 import { ClassFile } from '../models/files/class-file.model';
-import { RestAction } from '../models/rest-action.type';
+import { RequestMethod } from '../models/request-method.enum';
 import {
 	capitalize,
 	getDataTypeNameFromRefSchema,
-	isPrimitiveType, toCamelCase,
+	isPrimitiveType,
 	toKebabCase,
 	toPascalCase,
 	unCapitalize
@@ -19,7 +19,7 @@ import { OpenApiSchema } from '../models/open-api/open-api-schema';
 
 export class RequestMethodFactory {
 
-	private action: RestAction = 'GET';
+	private action: RequestMethod = RequestMethod.GET;
 	private content: Content = new Content();
 	private dataTypeName = '';
 	private endpoint = '';
@@ -38,7 +38,7 @@ export class RequestMethodFactory {
 
 
 
-	addRequestMethod(action: RestAction, endpoint: string, pathItem: PathItem): void {
+	addRequestMethod(action: RequestMethod, endpoint: string, pathItem: PathItem): void {
 		this.init(action, endpoint, pathItem)
 			.getContentFromPathItem()
 			.getSchemaFromContent()
@@ -53,7 +53,7 @@ export class RequestMethodFactory {
 
 
 
-	init(action: RestAction, endpoint: string, pathItem: PathItem): RequestMethodFactory {
+	init(action: RequestMethod, endpoint: string, pathItem: PathItem): RequestMethodFactory {
 		this.action = action;
 		this.endpoint = endpoint;
 		this.pathItem = pathItem;
@@ -64,15 +64,15 @@ export class RequestMethodFactory {
 
 	getContentFromPathItem(): RequestMethodFactory {
 		switch (this.action) {
-			case 'DELETE':
+			case RequestMethod.DELETE:
 				this.content = undefined;
 				break;
-			case 'GET':
+			case RequestMethod.GET:
 				this.content = this.pathItem?.get?.responses?.['200']?.['content'];
 				break;
-			case 'PATCH':
-			case 'POST':
-			case 'PUT':
+			case RequestMethod.PATCH:
+			case RequestMethod.POST:
+			case RequestMethod.PUT:
 				this.content = this.pathItem?.[this.action.toLowerCase()]?.requestBody?.['content'];
 				break;
 			default: {
@@ -95,13 +95,13 @@ export class RequestMethodFactory {
 
 	getGeneseMethod(): RequestMethodFactory {
 		switch (this.action) {
-			case 'GET':
+			case RequestMethod.GET:
 				this.geneseMethod = this.schema?.type === 'array' ? GeneseMethod.GET : GeneseMethod.GET_ONE;
 				break;
-			case 'POST':
-				this.geneseMethod = GeneseMethod.CREATE;
+			case RequestMethod.POST:
+				this.geneseMethod = GeneseMethod.POST;
 				break;
-			case 'PUT':
+			case RequestMethod.PUT:
 				this.geneseMethod = GeneseMethod.PUT;
 				break;
 		}
@@ -151,16 +151,16 @@ export class RequestMethodFactory {
 	addMethodToGeneseRequestService(): RequestMethodFactory {
 		let bodyMethod = '';
 		switch (this.action) {
-			case 'DELETE':
+			case RequestMethod.DELETE:
 				bodyMethod = this.setDeclarationAndGetBodyOfDeleteRequestMethod();
 				break;
-			case 'GET':
+			case RequestMethod.GET:
 				bodyMethod = this.setDeclarationAndGetBodyOfGetRequestMethod();
 				break;
-			case 'POST':
+			case RequestMethod.POST:
 				bodyMethod = this.setDeclarationAndGetBodyOfPostRequestMethod();
 				break;
-			case 'PUT':
+			case RequestMethod.PUT:
 				bodyMethod = this.setDeclarationAndGetBodyOfPutRequestMethod();
 				break;
 		}
@@ -195,7 +195,7 @@ export class RequestMethodFactory {
 		this.method.params = `body?: ${this.geneseInstance}, ${this.method.params}`;
 		this.method.setDeclaration(this.method.name, this.method.params, `Observable<any>`);
 		// TODO : refacto this line with genese-angular 1.2 (remove String)
-		return `return this.geneseService.getGeneseInstance(${this.geneseInstance}).${this.geneseMethod}(\`${this.endPointWithParams}\`, body, options);`;
+		return `return this.geneseService.instance().${this.geneseMethod}(\`${this.endPointWithParams}\`, body, options);`;
 	}
 
 

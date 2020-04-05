@@ -1,4 +1,3 @@
-import { FileService } from '../services/file.service';
 import { ClassFile } from '../models/files/class-file.model';
 
 export class GeneseRequestServiceFactory {

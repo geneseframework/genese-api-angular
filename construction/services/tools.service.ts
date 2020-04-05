@@ -1,6 +1,3 @@
-import { RestAction } from '../models/rest-action.type';
-import { Method } from '../models/files/method.model';
-
 const specialChars = new RegExp(/[{}\-_\/]/);
 
 
