@@ -244,6 +244,42 @@
                     "required": true
                 }
             ]
+        },
+        "/addresses": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Address"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Get addresses"
+                    }
+                }
+            },
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Address"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Book added"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -507,6 +543,20 @@
                 "type": "object",
                 "properties": {
                     "title": {
+                        "description": "",
+                        "type": "string"
+                    }
+                }
+            },
+            "Address": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                    "city": {
+                        "description": "",
+                        "type": "string"
+                    },
+                    "country": {
                         "description": "",
                         "type": "string"
                     }
