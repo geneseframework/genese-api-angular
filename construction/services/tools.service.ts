@@ -84,7 +84,7 @@ export function isPrimitiveType(type: string): boolean {
 
 
 
-export function getIndentConfig(): string {
+export function indent(): string {
     const appRoot = appRootPath.toString();
     let indent_style = '';
     let size = 1;
@@ -112,4 +112,3 @@ export function getIndentConfig(): string {
     });
 }
 
-getIndentConfig();

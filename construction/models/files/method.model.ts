@@ -1,9 +1,9 @@
-import { INDENT } from '../constants';
+import { indent } from '../../services/tools.service';
 
 export class Method {
 	declaration ?= '';
 	body ?= '';
-	end ?= `${INDENT}}`;
+	end ?= `${indent()}}`;
 	name ?= '';
 	params ?= '';
 	type ?= '';
