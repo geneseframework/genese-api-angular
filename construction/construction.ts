@@ -1,14 +1,17 @@
 import { OpenApiFactory } from './factories/open-api.factory';
 import { GeneseRequestServiceFactory } from './factories/genese-request-service.factory';
+import { Config } from './services/config.service';
 
 const fse = require('fs-extra');
 const appRootPath = require('app-root-path');
 
 export class Construction {
 
+
 	private appRoot = appRootPath.toString();
+	public config = new Config();
+    private geneseRequestServiceFactory: GeneseRequestServiceFactory;
 	private openApiFactory = new OpenApiFactory();
-	private geneseRequestServiceFactory: GeneseRequestServiceFactory = GeneseRequestServiceFactory.getInstance();
 
 
 	constructor() {
@@ -17,10 +20,19 @@ export class Construction {
 
 
 	startConstruction(): void {
-		this.createFolders();
-		this.createGeneseRequestService();
-		this.createEndpointsServicesAndDataTypes();
+	    this.getConfig().then(() => {
+	        this.geneseRequestServiceFactory = GeneseRequestServiceFactory.getInstance();
+            this.createFolders();
+            this.createGeneseRequestService();
+            this.createEndpointsServicesAndDataTypes();
+        });
 	}
+
+
+
+    getConfig(): Promise<any> {
+        return this.config.setConfig();
+    }
 
 
 
