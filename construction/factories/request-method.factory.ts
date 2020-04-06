@@ -181,12 +181,18 @@ export class RequestMethodFactory {
 
 	getGeneseMethod(): RequestMethodFactory {
 		switch (this.action) {
+            case RequestMethod.DELETE:
+                this.geneseMethod = GeneseMethod.DELETE;
+                break;
 			case RequestMethod.GET:
 				this.geneseMethod = this.serverSide.schema?.type === 'array' ? GeneseMethod.GET : GeneseMethod.GET_ONE;
 				break;
-			case RequestMethod.POST:
-				this.geneseMethod = GeneseMethod.POST;
-				break;
+            case RequestMethod.PATCH:
+                this.geneseMethod = GeneseMethod.PATCH;
+                break;
+            case RequestMethod.POST:
+                this.geneseMethod = GeneseMethod.POST;
+                break;
 			case RequestMethod.PUT:
 				this.geneseMethod = GeneseMethod.PUT;
 				break;
@@ -203,13 +209,12 @@ export class RequestMethodFactory {
 				bodyMethod = this.setDeclarationAndGetBodyOfDeleteRequestMethod();
 				break;
 			case RequestMethod.GET:
-				bodyMethod = this.setDeclarationAndGetBodyOfGetRequestMethod();
+				bodyMethod = this.setDeclarationAndGetBodyOfGetMethod();
 				break;
+			case RequestMethod.PATCH:
 			case RequestMethod.POST:
-				bodyMethod = this.setDeclarationAndGetBodyOfPostRequestMethod();
-				break;
-			case RequestMethod.PUT:
-				bodyMethod = this.setDeclarationAndGetBodyOfPutRequestMethod();
+            case RequestMethod.PUT:
+				bodyMethod = this.setDeclarationAndGetBodyOfPatchPostPutMethods();
 				break;
 		}
 		this.method.addLine(bodyMethod);
@@ -227,31 +232,22 @@ export class RequestMethodFactory {
 
 
 
-	setDeclarationAndGetBodyOfGetRequestMethod(): string {
+	setDeclarationAndGetBodyOfGetMethod(): string {
 		if (this.geneseMethod === GeneseMethod.GET) {
-			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.serverSide.dataTypeName}[]>`);
+			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.observable}[]>`);
 			return `return this.geneseService.getGeneseInstance(${this.serverSide.dataTypeName}).${this.geneseMethod}(\`${this.endPointWithParams}\`, options);`;
 		} else {
-			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.serverSide.dataTypeName}>`);
-			return `return this.geneseService.getGeneseInstance(${this.serverSide.dataTypeName}).${this.geneseMethod}(\`${this.endPointWithParams}\`);`;
+			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.observable}>`);
+			return `return this.geneseService.getGeneseInstance(${this.tConstructorInstance}).${this.geneseMethod}(\`${this.endPointWithParams}\`);`;
 		}
 	}
 
 
 
-	setDeclarationAndGetBodyOfPostRequestMethod(): string {
+	setDeclarationAndGetBodyOfPatchPostPutMethods(): string {
 		this.method.params = `body?: ${this.clientSide.dataTypeName}, ${this.method.params}`;
-		this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.serverSide.dataTypeName}>`);
-		// TODO : refacto this line with genese-angular 1.2 (remove String)
-		return `return this.geneseService.instance().${this.geneseMethod}(\`${this.endPointWithParams}\`, body, options);`;
-	}
-
-
-
-	setDeclarationAndGetBodyOfPutRequestMethod(): string {
-		this.method.params = `body?: ${this.clientSide.dataTypeName === 'any' ? 'any' : this.clientSide.dataTypeName}, ${this.method.params}`;
-		this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.serverSide.dataTypeName}>`);
-		return `return this.geneseService.getGeneseInstance(undefined).${GeneseMethod.PUT}(\`${this.endPointWithParams}\`, body, options);`;
+		this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.observable}>`);
+		return `return this.geneseService.instance(${this.tConstructorInstance}).${this.geneseMethod}(\`${this.endPointWithParams}\`, body, options);`;
 	}
 
 
@@ -265,4 +261,16 @@ export class RequestMethodFactory {
 	get endPointWithParams(): string {
 		return toPascalCase(this.endpoint.replace('{', '${'));
 	}
+
+
+
+	get tConstructorInstance(): string {
+	    return this.serverSide.dataTypeName === 'any' ? '' : this.serverSide.dataTypeName;
+    }
+
+
+
+    get observable(): string {
+	    return isPrimitiveType(this.serverSide.dataTypeName) ? this.serverSide.dataTypeName.toLowerCase() : this.serverSide.dataTypeName;
+    }
 }
