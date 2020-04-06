@@ -1,3 +1,6 @@
+const fse = require('fs-extra');
+const appRootPath = require('app-root-path');
+
 const specialChars = new RegExp(/[{}\-_\/]/);
 
 
@@ -72,4 +75,12 @@ export function getDataTypeNameFromRefSchema(refSchema = ''): string {
 export function isPrimitiveType(type: string): boolean {
 	return ['string', 'boolean', 'number', 'String', 'Boolean', 'Number'].includes(type);
 }
+
+
+
+// ----------------------------------------------------------------------------
+//						  Indentation
+// ----------------------------------------------------------------------------
+
+
 
