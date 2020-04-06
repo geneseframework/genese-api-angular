@@ -1,7 +1,9 @@
+import { INDENT } from '../constants';
+
 export class Method {
 	declaration ?= '';
 	body ?= '';
-	end ?= '\t}';
+	end ?= `${INDENT}}`;
 	name ?= '';
 	params ?= '';
 	type ?= '';

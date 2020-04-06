@@ -1,3 +1,6 @@
+const fse = require('fs-extra');
+const appRootPath = require('app-root-path');
+
 const specialChars = new RegExp(/[{}\-_\/]/);
 
 
@@ -73,3 +76,40 @@ export function isPrimitiveType(type: string): boolean {
 	return ['string', 'boolean', 'number', 'String', 'Boolean', 'Number'].includes(type);
 }
 
+
+
+// ----------------------------------------------------------------------------
+//						  Indentation
+// ----------------------------------------------------------------------------
+
+
+
+export function getIndentConfig(): string {
+    const appRoot = appRootPath.toString();
+    let indent_style = '';
+    let size = 1;
+    let indentation = '';
+    return fse.readFile(`${appRoot}/.editorconfig`).then(contentFile => {
+        const lines = contentFile.toString().split(`\n`);
+        for (const line of lines) {
+            if (line.indexOf('indent_style') > -1) {
+                indent_style = line.indexOf('space') > -1 ? ' ' : '\t';
+            }
+            if (line.indexOf('indent_size') > -1) {
+                size = Number(line.split('=')?.[1].trim());
+            }
+        }
+        if (indent_style && size) {
+            for (let i = 0; i < size; i++) {
+                indentation = `${indentation}${indent_style}`;
+            }
+        }
+        return indentation;
+    }).catch(e => {
+        console.log('Error : ', e);
+        console.log('indent = 4 spaces');
+        return '    ';
+    });
+}
+
+getIndentConfig();
