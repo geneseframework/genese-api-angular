@@ -1,8 +1,11 @@
 import { Method } from './method.model';
 import { ImportLine } from './import-line.model';
-import { indent } from '../../services/tools.service';
+import { Config } from '../../services/config.service';
 
 export class ClassFile {
+
+
+    private i = Config.indentation;
 
 	private _className ?= '';
 	private _constructorInstructions ?= '';
@@ -16,7 +19,7 @@ export class ClassFile {
 	private _importLines?: ImportLine[] = [];
 	private _methods?: Method[] = [];
 	private _methodsPart ?= '';
-	private _propertiesPart ?= `\r\n${indent()}`;
+	private _propertiesPart ?= `\r\n${this.i}`;
 
 
 	constructor() {
@@ -82,7 +85,7 @@ export class ClassFile {
 
 
 	addProperty(line = ''): void {
-		this._propertiesPart = `${this._propertiesPart}${line}\r\n${indent()}`;
+		this._propertiesPart = `${this._propertiesPart}${line}\r\n${this.i}`;
 	}
 
 
@@ -93,20 +96,20 @@ export class ClassFile {
 
 
 	setConstructorPart(): void {
-		this._constructorPart = `\r\n${indent()}constructor(\r\n${indent()}${indent()}${this._constructorParams}) {\r\n${indent()}${indent()}${this._constructorInstructions}}\r\n`;
+		this._constructorPart = `\r\n${this.i}constructor(\r\n${this.i}${this.i}${this._constructorParams}) {\r\n${this.i}${this.i}${this._constructorInstructions}}\r\n`;
 	}
 
 
 
 	addInstructionToConstructor(line = ''): void {
-		this._constructorInstructions = `${this._constructorInstructions}${line}\r\n${indent()}`;
+		this._constructorInstructions = `${this._constructorInstructions}${line}\r\n${this.i}`;
 		this.setConstructorPart();
 	}
 
 
 
 	addParamToConstructor(param = ''): void {
-		this._constructorParams = `${this._constructorParams}${param}\r\n${indent()}${indent()}`;
+		this._constructorParams = `${this._constructorParams}${param}\r\n${this.i}${this.i}`;
 		this.setConstructorPart();
 	}
 
@@ -121,7 +124,7 @@ export class ClassFile {
 	setMethodsPart(): void {
 		this._methodsPart = '';
 		for (const method of this._methods) {
-			this._methodsPart += `\r\n\r\n\r\n${indent()}${method.stringify()}`;
+			this._methodsPart += `\r\n\r\n\r\n${this.i}${method.stringify()}`;
 		}
 	}
 
@@ -137,7 +140,7 @@ export class ClassFile {
 	addLineToMethodAlreadyExisting(methodName: string, line: string) {
 		let method: Method = this._methods.find(e => e.name === methodName);
 		if (method) {
-			method.body = method.body ? `${method.body}${indent()}${line}` : `${indent()}${indent()}${line}`;
+			method.body = method.body ? `${method.body}${this.i}${line}` : `${this.i}${this.i}${line}`;
 		}
 		this.setMethodsPart();
 	}

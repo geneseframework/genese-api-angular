@@ -1,6 +1,7 @@
 import { FileService } from '../services/file.service';
 import { Method } from '../models/files/method.model';
 import { ClassFile } from '../models/files/class-file.model';
+import { Config } from '../services/config.service';
 
 
 // -------------------------------------------------------------------------------
@@ -104,9 +105,9 @@ export class ClassFileFactory {
 		}
 		method.body = textBeforeLastBracket.slice(charIndex + 2);
 		const textBeforeFirstBracketLastMethod = textBeforeLastBracket.slice(0, charIndex + 2);
-		method.declaration = textBeforeFirstBracketLastMethod.slice(textBeforeFirstBracketLastMethod.lastIndexOf('\t') + 1);
+		method.declaration = textBeforeFirstBracketLastMethod.slice(textBeforeFirstBracketLastMethod.lastIndexOf(Config.indentation) + 1);
 		method.setNameParamsType(method.declaration);
-		this.partOfContentFile = textBeforeFirstBracketLastMethod.slice(0, textBeforeFirstBracketLastMethod.lastIndexOf('\t'));
+		this.partOfContentFile = textBeforeFirstBracketLastMethod.slice(0, textBeforeFirstBracketLastMethod.lastIndexOf(Config.indentation));
 		this.classFile.addMethod(method);
 	}
 }

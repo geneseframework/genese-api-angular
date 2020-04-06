@@ -1,9 +1,12 @@
-import { indent } from '../../services/tools.service';
+import { Config } from '../../services/config.service';
+
+
 
 export class Method {
+    i = Config.indentation;
 	declaration ?= '';
 	body ?= '';
-	end ?= `${indent()}}`;
+	end ?= `${this.i}}`;
 	name ?= '';
 	params ?= '';
 	type ?= '';
@@ -28,7 +31,7 @@ export class Method {
 
 
 	addLine(line: string): Method {
-		this.body = this.body ? `${this.body}\t${line}` : `\t\t${line}`;
+		this.body = this.body ? `${this.body}${this.i}${line}` : `${this.i}${this.i}${line}`;
 		return this;
 	}
 
