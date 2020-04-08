@@ -5,6 +5,7 @@ import { PathsFactory } from './paths.factory';
 
 /**
  * Factory of DataTypes and Endpoints with the genese-api.json file
+ * Format of OpenApi objects : see https://swagger.io/specification/#oasObject
  */
 export class OpenApiFactory implements InitFactoriesInterface {
 

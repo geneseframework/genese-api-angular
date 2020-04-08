@@ -4,16 +4,23 @@ import { ClassFile } from '../models/files/class-file.model';
 import { getDataTypeNameFromRefSchema, toKebabCase } from '../services/tools.service';
 import { OpenApiSchema } from '../models/open-api/open-api-schema';
 
+/**
+ * Factory of DataType files
+ */
 export class DatatypeFactory {
 
-	private classFile: ClassFile = new ClassFile();
-	private fileService: FileService = new FileService();
+	private classFile: ClassFile = new ClassFile();             // File object which will be used to construct the file
+	private fileService: FileService = new FileService();       // Service managing files
 
 	constructor() {
 	}
 
-
-	create(dataTypeName: string, schema: OpenApiSchema) {
+    /**
+     * Create DataType file for a given name and a given OpenApiSchema
+     * @param dataTypeName
+     * @param schema
+     */
+	create(dataTypeName: string, schema: OpenApiSchema): void {
 		this.classFile
 			.setFileName(`${toKebabCase(dataTypeName)}.datatype.ts`)
 			.setFolder(`/genese/genese-api/datatypes/`)
@@ -23,7 +30,11 @@ export class DatatypeFactory {
 	}
 
 
-
+    /**
+     * Adds properties and imports to the datatype file
+     * @param dataTypeName
+     * @param schema
+     */
 	addPropertiesAndImports(dataTypeName: string, schema: OpenApiSchema): void {
 		if (schema.properties) {
 			for (let propertyName of Object.keys(schema.properties)) {
@@ -35,7 +46,12 @@ export class DatatypeFactory {
 	}
 
 
-
+    /**
+     * Adds a default value to a given property (mandatory for genese-angular module)
+     * Adds corresponding imports
+     * @param dataTypeName
+     * @param property
+     */
 	addDefaultValueAndImport(dataTypeName: string, property: Property): string {
 		switch (property.type) {
 			case 'array':
@@ -60,7 +76,11 @@ export class DatatypeFactory {
 	}
 
 
-
+    /**
+     * Adds default values for properties with type 'array' (mandatory for genese-angular module)
+     * @param dataTypeName
+     * @param property
+     */
 	getDefaultValueArrays(dataTypeName: string, property: Property): string {
 		let defaultValue = '[';
 		if (property && property.items) {
