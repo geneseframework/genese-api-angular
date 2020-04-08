@@ -1,58 +1,59 @@
-import { Content } from '../models/open-api/content';
 import { FileService } from '../services/file.service';
 import { Method } from '../models/files/method.model';
 import { GeneseRequestServiceFactory } from './genese-request-service.factory';
 import { ClassFile } from '../models/files/class-file.model';
-import { RequestMethod } from '../models/request-method.enum';
+import { RequestMethod } from '../models/requests/request-method.enum';
 import {
-	capitalize,
-	getDataTypeNameFromRefSchema,
-	isPrimitiveType,
-	toKebabCase,
-	toPascalCase,
-	unCapitalize
+    capitalize,
+    getDataTypeNameFromRefSchema,
+    isPrimitiveType,
+    toKebabCase,
+    toPascalCase,
+    unCapitalize
 } from '../services/tools.service';
-import { GeneseMethod } from '../models/genese-method.enum';
+import { GeneseMethod } from '../models/requests/genese-method.enum';
 import { PathItem } from '../models/open-api/path-item';
 import { OpenApiSchema } from '../models/open-api/open-api-schema';
+import { RequestSideProperties } from '../models/requests/request-side-properties.interface';
+import { RequestSide } from '../models/requests/request-side.enum';
 
-export interface SideProperties {
-	content?: Content,
-	dataTypeName?: string,
-	schema?: OpenApiSchema,
-	refOrPrimitive?: string
-}
 
-export enum SideRequest {
-	CLIENT = 'clientSide',
-	SERVER = 'serverSide'
-}
-
+/**
+ * Factory of CRUD methods in order to add them into genese-request.service.ts file
+ */
 export class RequestMethodFactory {
 
-	private action: RequestMethod = RequestMethod.GET;
-	private clientSide: SideProperties = {};
-	private endpoint = '';
-	private fileService: FileService = new FileService();
-	private geneseMethod: GeneseMethod;
-	private geneseRequestService = new ClassFile();
-	private method: Method = new Method();
-	private pathItem: PathItem = new PathItem();
-	private serverSide: SideProperties = {};
+	private action: RequestMethod = RequestMethod.GET;              // The action verb of the http request
+	private clientSide: RequestSideProperties = {};                 // The properties of the client side of the request (body, ...)
+	private endpoint = '';                                          // The endpoint path of the request
+	private fileService: FileService = new FileService();           // The service managing files
+	private geneseMethod: GeneseMethod;                             // The genese-angular method corresponding to the action
+	private geneseRequestService = new ClassFile();                 // The content of genese-request.service.ts file (as ClassFile object)
+	private method: Method = new Method();                          // The CRUD method to add
+	private pathItem: PathItem = new PathItem();                    // The PathItem containing the endpoint
+	private serverSide: RequestSideProperties = {};                 // The properties of the server side of the request (response, ...)
 
 
+    /**
+     * Sets geneseRequestService with Singleton instance
+     */
 	constructor() {
 		this.geneseRequestService = GeneseRequestServiceFactory.getInstance().classFile;
 	}
 
 
-
+    /**
+     * Algorithm of the creation of the CRUD method
+     * @param action
+     * @param endpoint
+     * @param pathItem
+     */
 	addRequestMethod(action: RequestMethod, endpoint: string, pathItem: PathItem): void {
 		this.init(action, endpoint, pathItem)
 			.addNameAndParamsToMethod()
 			.getContentsFromPathItem()
-			.addProperties(SideRequest.CLIENT)
-			.addProperties(SideRequest.SERVER)
+			.addProperties(RequestSide.CLIENT)
+			.addProperties(RequestSide.SERVER)
 			.getGeneseMethod()
 			.addMethodToGeneseRequestService()
 			.updateGeneseRequestService();
@@ -65,8 +66,13 @@ export class RequestMethodFactory {
 	// ----------------------------------------------------------------------------
 
 
-
-
+    /**
+     * Initialize the properties action, endpoint and pathItem
+     * This is mandatory to be able to use chained methods (returning 'this')
+     * @param action
+     * @param endpoint
+     * @param pathItem
+     */
 	init(action: RequestMethod, endpoint: string, pathItem: PathItem): RequestMethodFactory {
 		this.action = action;
 		this.endpoint = endpoint;
@@ -75,6 +81,9 @@ export class RequestMethodFactory {
 	}
 
 
+    /**
+     * Adds the name and the parameters to the method
+     */
 	addNameAndParamsToMethod(): RequestMethodFactory {
 		let methodName = '';
 		let params = '';
@@ -97,7 +106,9 @@ export class RequestMethodFactory {
 	}
 
 
-
+    /**
+     * Gets the 'content' OpenApi node for the client and the server side
+     */
 	getContentsFromPathItem(): RequestMethodFactory {
 		this.clientSide.content = this.pathItem?.[this.action.toLowerCase()]?.requestBody?.['content'];
 		this.serverSide.content = this.pathItem?.[this.action.toLowerCase()]?.responses?.['200']?.['content'];
@@ -111,9 +122,11 @@ export class RequestMethodFactory {
 	// ----------------------------------------------------------------------------
 
 
-
-
-	addProperties(side: SideRequest): RequestMethodFactory {
+    /**
+     * Adds properties to each request side (schema, refOrPrimitive, ...)
+     * @param side
+     */
+	addProperties(side: RequestSide): RequestMethodFactory {
 		this.getSchemaFromContent(side)
 			.getRefOrPrimitive(side)
 			.getDataTypeNameFromRefSchema(side)
@@ -122,16 +135,22 @@ export class RequestMethodFactory {
 	}
 
 
-
-	getSchemaFromContent(side: SideRequest): RequestMethodFactory {
+    /**
+     * Sets the schema for a given request side
+     * @param side
+     */
+	getSchemaFromContent(side: RequestSide): RequestMethodFactory {
 		let schema: any = this[side]?.content?.['application/json']?.schema ?? this[side]?.['text/plain']?.schema as OpenApiSchema;
 		this[side].schema = schema ?? {type: 'any'};
 		return this;
 	}
 
 
-
-	getRefOrPrimitive(side: SideRequest): RequestMethodFactory {
+    /**
+     * Sets reference or primitive for a given request side
+     * @param side
+     */
+	getRefOrPrimitive(side: RequestSide): RequestMethodFactory {
 		if (this[side].schema) {
 			if (this[side].schema?.$ref) {
 				this[side].refOrPrimitive = this[side].schema?.$ref;
@@ -155,8 +174,11 @@ export class RequestMethodFactory {
 	}
 
 
-
-	addImport(side: SideRequest): RequestMethodFactory {
+    /**
+     * If necessary, adds import for a given request side
+     * @param side
+     */
+	addImport(side: RequestSide): RequestMethodFactory {
 		if (!isPrimitiveType(this[side].dataTypeName) && this[side].refOrPrimitive !== 'any') {
 			this.geneseRequestService.addImport(this[side].dataTypeName, `../datatypes/${toKebabCase(this[side].dataTypeName)}.datatype`);
 		}
@@ -164,8 +186,11 @@ export class RequestMethodFactory {
 	}
 
 
-
-	getDataTypeNameFromRefSchema(side: SideRequest): RequestMethodFactory {
+    /**
+     * Gets the name of the DataType included in a reference of a schema
+     * @param side
+     */
+	getDataTypeNameFromRefSchema(side: RequestSide): RequestMethodFactory {
 		this[side].dataTypeName = getDataTypeNameFromRefSchema(this[side].refOrPrimitive);
 		return this;
 	}
@@ -177,8 +202,9 @@ export class RequestMethodFactory {
 	// ----------------------------------------------------------------------------
 
 
-
-
+    /**
+     * Gets the genese-angular method name for the given http action verb
+     */
 	getGeneseMethod(): RequestMethodFactory {
 		switch (this.action) {
             case RequestMethod.DELETE:
@@ -201,7 +227,9 @@ export class RequestMethodFactory {
 	}
 
 
-
+    /**
+     * Adds the method to the genese-request.service ClassFile
+     */
 	addMethodToGeneseRequestService(): RequestMethodFactory {
 		let bodyMethod = '';
 		switch (this.action) {
@@ -223,7 +251,9 @@ export class RequestMethodFactory {
 	}
 
 
-
+    /**
+     * For a DELETE request, adds the corresponding method
+     */
 	setDeclarationAndGetBodyOfDeleteRequestMethod(): string {
 		this.method.setDeclaration(this.method.name, this.method.params, `Observable<any>`);
 		// TODO : refacto this line with genese-angular 1.2 (remove String)
@@ -231,7 +261,9 @@ export class RequestMethodFactory {
 	}
 
 
-
+    /**
+     * For a GET request, adds the corresponding method
+     */
 	setDeclarationAndGetBodyOfGetMethod(): string {
 		if (this.geneseMethod === GeneseMethod.GET) {
 			this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.observable}[]>`);
@@ -243,7 +275,9 @@ export class RequestMethodFactory {
 	}
 
 
-
+    /**
+     * For a PATCH, POST or PUT request, adds the corresponding method
+     */
 	setDeclarationAndGetBodyOfPatchPostPutMethods(): string {
 		this.method.params = `body?: ${this.clientSide.dataTypeName}, ${this.method.params}`;
 		this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.observable}>`);
@@ -251,25 +285,33 @@ export class RequestMethodFactory {
 	}
 
 
-
+    /**
+     * Updates the genese-request.service file with the constructed content
+     */
 	updateGeneseRequestService() {
 		this.fileService.updateFile(`/genese/genese-api/services/`, `genese-request.service.ts`, this.geneseRequestService.content);
 	}
 
 
-
+    /**
+     * Format endpoint path in order to add it in genese-angular call
+     */
 	get endPointWithParams(): string {
 		return toPascalCase(this.endpoint.replace('{', '${'));
 	}
 
 
-
+    /**
+     * Gets the TConstructor used in genese-angular method call
+     */
 	get tConstructorInstance(): string {
 	    return this.serverSide.dataTypeName === 'any' ? '' : this.serverSide.dataTypeName;
     }
 
 
-
+    /**
+     * Gets the type of the Observable of the genese-angular method
+     */
     get observable(): string {
 	    return isPrimitiveType(this.serverSide.dataTypeName) ? this.serverSide.dataTypeName.toLowerCase() : this.serverSide.dataTypeName;
     }

@@ -4,16 +4,22 @@ import { DatatypeFactory } from './datatype.factory';
 import { OpenApiSchema } from '../models/open-api/open-api-schema';
 
 
+/**
+ * Factory for OpenApi Schemas objects
+ * See https://swagger.io/specification/#schemaObject
+ */
 export class SchemasFactory implements InitFactoriesInterface {
 
-	private openApiService: OpenApiService = OpenApiService.getInstance();
+	private openApiService: OpenApiService = OpenApiService.getInstance();      // Instance of OpenApiService
 
 
 	constructor() {
 	}
 
 
-
+    /**
+     * Starts the creation of the DataTypes for each Schema
+     */
 	init(target: any): void {
 		if (target?.schemas) {
 			this.openApiService.openApi.components.schemas = {};
@@ -22,7 +28,10 @@ export class SchemasFactory implements InitFactoriesInterface {
 	}
 
 
-
+    /**
+     * Create DataType file for each Schema
+     * @param schemas
+     */
 	createDataTypes(schemas: OpenApiSchema[]): void {
 		for (const dataTypeName of Object.keys(schemas)) {
 			const dataTypeFactory = new DatatypeFactory();

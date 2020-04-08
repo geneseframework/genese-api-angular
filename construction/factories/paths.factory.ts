@@ -4,16 +4,22 @@ import { OpenApiService } from '../services/open-api.service';
 import { PathItemFactory } from './path-item.factory';
 
 
+/**
+ * Factory for OpenApi Paths objects (Api routes)
+ * See https://swagger.io/specification/#pathsObject
+ */
 export class PathsFactory implements InitFactoriesInterface {
 
-	private openApiService: OpenApiService = OpenApiService.getInstance();
+	private openApiService: OpenApiService = OpenApiService.getInstance();      // Instance of OpenApiService
 
 
 	constructor() {}
 
 
-
-	init(target: Paths): any {
+    /**
+     * Starts the creation of the request services by parsing the paths of the genese-api.json file
+     */
+    init(target: Paths): any {
 		if (target?.paths) {
 			this.openApiService.openApi.paths = {};
 			for (const path of Object.keys(target.paths)) {

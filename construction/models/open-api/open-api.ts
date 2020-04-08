@@ -5,6 +5,10 @@ import { Tag } from './tag';
 import { Server } from './server';
 import { Components } from './components';
 
+/**
+ * OpenApi object
+ * See https://swagger.io/specification/#oasObject
+ */
 export class OpenApi {
 	components?: Components;
 	externalDocs?: ExternalDocs;
