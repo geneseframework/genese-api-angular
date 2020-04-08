@@ -1,18 +1,21 @@
 const fse = require('fs-extra');
 const appRootPath = require('app-root-path');
 
+/**
+ * The editor configuration
+ */
 export class Config {
 
-
-    public static indentation: string;
-    private static instance: Config;
-
+    public static indentation = '    ';             // Indentation style
+    private static instance: Config;                // Singleton instance of Config
 
     constructor() {
     }
 
 
-
+    /**
+     * Singleton pattern
+     */
     public static getInstance(): Config {
         if (!Config.instance) {
             Config.instance = new Config();
@@ -21,13 +24,17 @@ export class Config {
     }
 
 
-
+    /**
+     * Returns the editor configuration (just indentation for now)
+     */
     setConfig(): Promise<any> {
         return this.setIndentation();
     }
 
 
-
+    /**
+     * Sets the indentation by default with the .editorconfig file
+     */
     setIndentation(): Promise<any> {
         const appRoot = appRootPath.toString();
         let indent_style = '';
