@@ -2,24 +2,32 @@ import { Method } from './method.model';
 import { ImportLine } from './import-line.model';
 import { Config } from '../../services/config.service';
 
+/**
+ * This class contains all elements defining a class :
+ *      - imports
+ *      - declaration
+ *      - properties
+ *      - constructor
+ *      - methods
+ *  This class also contains methods managing these different elements
+ */
 export class ClassFile {
 
 
-    private i = Config.indentation;
+    private i = Config.indentation;                     // Indentation of the repository
 
-	private _className ?= '';
-	private _constructorInstructions ?= '';
-	private _constructorParams ?= '';
-	private _constructorPart ?= '';
-	private _content ?= '';
-	private _declarationPart ?= '';
-	private _endOfFilePart ?= '\r\n}\r\n';
-	private _fileName ?= '';
-	private _fileFolder ?= '';
-	private _importLines?: ImportLine[] = [];
-	private _methods?: Method[] = [];
-	private _methodsPart ?= '';
-	private _propertiesPart ?= `\r\n${this.i}`;
+	private _constructorInstructions ?= '';             // Body of the constructor
+	private _constructorParams ?= '';                   // Params of the constructor
+	private _constructorPart ?= '';                     // Part of the file containing the constructor
+	private _content ?= '';                             // All content of the file
+	private _declarationPart ?= '';                     // Part of the file containing the declaration of the class
+	private _endOfFilePart ?= '\r\n}\r\n';              // Part of the file containing the last lines of the file
+	private _fileName ?= '';                            // File name
+	private _fileFolder ?= '';                          // Folder containing the file
+	private _importLines?: ImportLine[] = [];           // Array of lines which are on the imports
+	private _methods?: Method[] = [];                   // Array of the methods of the class
+	private _methodsPart ?= '';                         // Part of the file containing the methods
+	private _propertiesPart ?= `\r\n${this.i}`;         // Part of the file containing the properties
 
 
 	constructor() {
@@ -32,9 +40,12 @@ export class ClassFile {
 	// ----------------------------------------------------------------------------
 
 
-
-
-	addImport(objectToImport: string, from: string): void {
+    /**
+     * Add a line on the imports part
+     * @param objectToImport    {string} object imported
+     * @param from              {string} module or path where is the object to import
+     */
+    addImport(objectToImport: string, from: string): void {
 		const existingFrom = this._importLines.find(e => e.from === from);
 		if (existingFrom) {
 			if (!existingFrom.objectsToImport.includes(objectToImport)) {
@@ -46,7 +57,10 @@ export class ClassFile {
 	}
 
 
-
+    /**
+     * Get the part "imports" of the file
+     * @private
+     */
 	private get _importsPart(): string {
 		let importsPart = '';
 		for (const importLine of this._importLines) {
@@ -67,8 +81,11 @@ export class ClassFile {
 	// ----------------------------------------------------------------------------
 
 
-
-
+    /**
+     * Set the declaration part of the class
+     * @param className
+     * @param decorator
+     */
 	setClassDeclaration(className: string, decorator?: string): ClassFile {
 		const firstLine: string = decorator ? `\r\n${decorator}\r\n` : '\r\n';
 		this._declarationPart = `${firstLine}export class ${className} {\r\n\r\n`;
@@ -82,8 +99,10 @@ export class ClassFile {
 	// ----------------------------------------------------------------------------
 
 
-
-
+    /**
+     * Adds a property to part "properties" of the class
+     * @param line
+     */
 	addProperty(line = ''): void {
 		this._propertiesPart = `${this._propertiesPart}${line}\r\n${this.i}`;
 	}
@@ -95,19 +114,18 @@ export class ClassFile {
 	// ----------------------------------------------------------------------------
 
 
+    /**
+     * Adds a constructor to the class
+     */
 	setConstructorPart(): void {
 		this._constructorPart = `\r\n${this.i}constructor(\r\n${this.i}${this.i}${this._constructorParams}) {\r\n${this.i}${this.i}${this._constructorInstructions}}\r\n`;
 	}
 
 
-
-	addInstructionToConstructor(line = ''): void {
-		this._constructorInstructions = `${this._constructorInstructions}${line}\r\n${this.i}`;
-		this.setConstructorPart();
-	}
-
-
-
+    /**
+     * Adds a param to the constructor
+     * @param param {string} the name of the param with its type and a comma at the end
+     */
 	addParamToConstructor(param = ''): void {
 		this._constructorParams = `${this._constructorParams}${param}\r\n${this.i}${this.i}`;
 		this.setConstructorPart();
@@ -120,7 +138,9 @@ export class ClassFile {
 	// ----------------------------------------------------------------------------
 
 
-
+    /**
+     * Set the part "methods" of the file with all the methods contained in the class
+     */
 	setMethodsPart(): void {
 		this._methodsPart = '';
 		for (const method of this._methods) {
@@ -129,19 +149,12 @@ export class ClassFile {
 	}
 
 
-
+    /**
+     * Adds a method to the class
+     * @param method: {Method} the method to add
+     */
 	addMethod(method: Method): void {
 		this._methods.push(method);
-		this.setMethodsPart();
-	}
-
-
-
-	addLineToMethodAlreadyExisting(methodName: string, line: string) {
-		let method: Method = this._methods.find(e => e.name === methodName);
-		if (method) {
-			method.body = method.body ? `${method.body}${this.i}${line}` : `${this.i}${this.i}${line}`;
-		}
 		this.setMethodsPart();
 	}
 
@@ -151,40 +164,38 @@ export class ClassFile {
 	// ----------------------------------------------------------------------------
 
 
-
+    /**
+     * Sets the name of the file
+     * @param fileName
+     */
 	setFileName(fileName: string): ClassFile {
 		this._fileName = fileName;
 		return this;
 	}
 
 
-
+    /**
+     * Gets the name of the file
+     */
 	get fileName(): string {
 		return this._fileName;
 	}
 
 
 
-	setClassName(className: string): ClassFile {
-		this._className = className;
-		return this;
-	}
-
-
-
-	get className(): string {
-		return this._className;
-	}
-
-
-
+    /**
+     * Sets the folder of the file
+     * @param pathFolder
+     */
 	setFolder(pathFolder: string): ClassFile {
 		this._fileFolder = pathFolder;
 		return this;
 	}
 
 
-
+    /**
+     * Gets the folder of the file
+     */
 	get folder(): string {
 		return this._fileFolder;
 	}
@@ -195,7 +206,9 @@ export class ClassFile {
 	// ----------------------------------------------------------------------------
 
 
-
+    /**
+     * Gets the content of the file
+     */
 	get content(): string {
 		this._content = `${this._importsPart}${this._declarationPart}${this._propertiesPart}` +
 			`${this._constructorPart}${this._methodsPart}${this._endOfFilePart}`;
