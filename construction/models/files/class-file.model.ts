@@ -1,6 +1,7 @@
 import { Method } from './method.model';
 import { ImportLine } from './import-line.model';
 import { Config } from '../../services/config.service';
+import { WARNING_GENERATED_CODE } from './warning';
 
 /**
  * This class contains all elements defining a class :
@@ -16,6 +17,7 @@ export class ClassFile {
 
     private i = Config.indentation;                     // Indentation of the repository
 
+    private _comments ?= '';                            // Comments on top the file
 	private _constructorInstructions ?= '';             // Body of the constructor
 	private _constructorParams ?= '';                   // Params of the constructor
 	private _constructorPart ?= '';                     // Part of the file containing the constructor
@@ -32,7 +34,6 @@ export class ClassFile {
 
 	constructor() {
 	}
-
 
 
 	// ----------------------------------------------------------------------------
@@ -210,7 +211,7 @@ export class ClassFile {
      * Gets the content of the file
      */
 	get content(): string {
-		this._content = `${this._importsPart}${this._declarationPart}${this._propertiesPart}` +
+		this._content = `${WARNING_GENERATED_CODE}${this._importsPart}${this._declarationPart}${this._propertiesPart}` +
 			`${this._constructorPart}${this._methodsPart}${this._endOfFilePart}`;
 		return this._content;
 	}
