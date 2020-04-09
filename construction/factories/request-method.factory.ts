@@ -107,7 +107,7 @@ export class RequestMethodFactory {
 
 
     /**
-     * Gets the 'content' OpenApi node for the client and the server side
+     * Gets the OpenApi node 'content' for the client and the server side
      */
 	getContentsFromPathItem(): RequestMethodFactory {
 		this.clientSide.content = this.pathItem?.[this.action.toLowerCase()]?.requestBody?.['content'];

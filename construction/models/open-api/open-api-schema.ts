@@ -1,3 +1,8 @@
+
+/**
+ * OpenApi object
+ * See https://swagger.io/specification/#schemaObject
+ */
 export class OpenApiSchema {
 	$ref?: string;
 	additionalProperties?: boolean | OpenApiSchema;

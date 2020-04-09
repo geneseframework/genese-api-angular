@@ -1,3 +1,8 @@
+
+/**
+ * OpenApi object
+ * See https://swagger.io/specification/#parameterObject
+ */
 export class Parameter {
 	allowEmptyValue?: boolean;
 	deprecated?: boolean;

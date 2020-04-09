@@ -7,6 +7,10 @@ import { Header } from './header';
 import { Links } from './links';
 import { Callbacks } from './callbacks';
 
+/**
+ * OpenApi object
+ * See https://swagger.io/specification/#componentsObject
+ */
 export class Components {
 	callbacks?: Callbacks;
 	examples?: Examples = new Examples();
