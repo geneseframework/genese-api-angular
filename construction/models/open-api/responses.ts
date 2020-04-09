@@ -1,9 +1,11 @@
 import { Reference } from './reference';
 import { Response } from './response';
 
+/**
+ * OpenApi object
+ * See https://swagger.io/specification/#responsesObject
+ */
 export class Responses {
-	// default?: Response | Reference;
-	// [key: string]: Response;
 	[responseCode: string]: Response | Reference;
 }
 

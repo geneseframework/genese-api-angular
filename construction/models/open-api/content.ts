@@ -1,5 +1,9 @@
 import { MediaType } from './media-type';
 
+/**
+ * OpenApi object
+ * See https://swagger.io/specification/#requestBodyObject
+ */
 export class Content {
 	[contentType: string]: MediaType;
 }

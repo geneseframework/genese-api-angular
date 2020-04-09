@@ -7,6 +7,10 @@ import { Security } from './security';
 import { Callbacks } from './callbacks';
 import { Reference } from './reference';
 
+/**
+ * OpenApi object
+ * See https://swagger.io/specification/#operationObject
+ */
 export class Operation {
 	callbacks?: Callbacks;
 	deprecated?: boolean;
