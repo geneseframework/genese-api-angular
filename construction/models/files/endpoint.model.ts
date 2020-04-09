@@ -2,8 +2,8 @@ import { toCamelCase } from '../../services/tools.service';
 
 export class Endpoint {
 
-    public path = '';
-    public pathWithParamsInPascalCase = '';
+    public path = '';                               // The path of the endpoint
+    public pathWithParamsInPascalCase = '';         // The path of the endpoint with params formatted in camelCase
 
 
     constructor(path: string) {
@@ -11,30 +11,41 @@ export class Endpoint {
     }
 
 
+    /**
+     * Returns the path of the endpoint with params formatted in camelCase
+     */
     get endpointWithParamsInPascalCase(): string {
-        this.getParams(this.path);
+        this.parseParams(this.path);
         return this.pathWithParamsInPascalCase;
     }
 
 
-    getParams(text: string): void {
-        const nextParam: EndpointParam = this.getNextParam(text);
+    /**
+     * Parses recursively a path in order to format its params in camelCase
+     * @param path
+     */
+    parseParams(path: string): void {
+        const nextParam: EndpointParam = this.getNextParam(path);
         if (nextParam) {
-            this.pathWithParamsInPascalCase = `${this.pathWithParamsInPascalCase}${text.slice(0, nextParam.leftIndex)}\${${nextParam.param}}`;
-            const textAfterParam = text.slice(nextParam.rightIndex);
-            this.getParams(textAfterParam);
+            this.pathWithParamsInPascalCase = `${this.pathWithParamsInPascalCase}${path.slice(0, nextParam.leftIndex)}\${${nextParam.param}}`;
+            const textAfterParam = path.slice(nextParam.rightIndex);
+            this.parseParams(textAfterParam);
         } else {
-            this.pathWithParamsInPascalCase = `${this.pathWithParamsInPascalCase}${text}`;
+            this.pathWithParamsInPascalCase = `${this.pathWithParamsInPascalCase}${path}`;
         }
     }
 
 
-    getNextParam(text: string): EndpointParam {
-        const firstLeftBracketIndex = text?.indexOf('{');
-        const firstRightBracketIndex = text?.indexOf('}');
+    /**
+     * Returns the first param of a path
+     * @param path
+     */
+    getNextParam(path: string): EndpointParam {
+        const firstLeftBracketIndex = path?.indexOf('{');
+        const firstRightBracketIndex = path?.indexOf('}');
         let endpointParam: EndpointParam = undefined;
         if (firstLeftBracketIndex > -1 && firstRightBracketIndex > firstLeftBracketIndex) {
-            const param = toCamelCase(text.slice(firstLeftBracketIndex + 1, firstRightBracketIndex));
+            const param = toCamelCase(path.slice(firstLeftBracketIndex + 1, firstRightBracketIndex));
             endpointParam = {leftIndex: firstLeftBracketIndex, rightIndex: firstRightBracketIndex + 1, param};
         }
         return endpointParam;
@@ -42,6 +53,9 @@ export class Endpoint {
 }
 
 
+/**
+ * Interface describing param properties in an endpoint
+ */
 interface EndpointParam {
     leftIndex?: number;
     param?: string;
