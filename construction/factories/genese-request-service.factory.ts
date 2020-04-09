@@ -24,28 +24,30 @@ export class GeneseRequestServiceFactory {
      * Starts the construction of the genese-request-service.ts file
      */
 	init(): void {
-		this.addImports();
-		this.addDeclaration();
-		this.addConstructor();
-	}
-
-
-    /**
-     * Adds the declaration of the GeneseRequestService class
-     */
-	addDeclaration(): void {
-		this.classFile.setClassDeclaration('GeneseRequestService', '@Injectable()');
+	    this.addImports()
+		    .addDeclaration()
+		    .addConstructor();
 	}
 
 
     /**
      * Adds the imports of the GeneseRequestService class
      */
-	addImports(): void {
-		this.classFile.addImport('Observable', 'rxjs');
-		this.classFile.addImport('HttpClient', '@angular/common/http');
-		this.classFile.addImport('Injectable', '@angular/core');
-		this.classFile.addImport('GeneseService, RequestOptions', 'genese-angular');
+    addImports(): GeneseRequestServiceFactory {
+        this.classFile.addImport('Observable', 'rxjs');
+        this.classFile.addImport('HttpClient', '@angular/common/http');
+        this.classFile.addImport('Injectable', '@angular/core');
+        this.classFile.addImport('GeneseService, RequestOptions', 'genese-angular');
+        return this;
+    }
+
+
+    /**
+     * Adds the declaration of the GeneseRequestService class
+     */
+	addDeclaration(): GeneseRequestServiceFactory {
+		this.classFile.setClassDeclaration('GeneseRequestService', '@Injectable()');
+		return this;
 	}
 
 

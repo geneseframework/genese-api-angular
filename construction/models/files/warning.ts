@@ -3,9 +3,7 @@
  */
 export const WARNING_GENERATED_CODE = `
 	/**
-	* WARNING: automatically generated code. Please don't add or modify this file.
-	*
-	* @license
-	*
-	* Use of this source code is governed by an MIT-style license
+	* WARNING: code generated automatically. Please don't modify this file.
+	*/
+	\r\n
 `;
