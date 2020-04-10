@@ -17,7 +17,6 @@ export class ClassFile {
 
     private i = Config.indentation;                     // Indentation of the repository
 
-    private _comments ?= '';                            // Comments on top the file
 	private _constructorInstructions ?= '';             // Body of the constructor
 	private _constructorParams ?= '';                   // Params of the constructor
 	private _constructorPart ?= '';                     // Part of the file containing the constructor

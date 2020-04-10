@@ -212,7 +212,7 @@ export class RequestMethodFactory {
                 this.geneseMethod = GeneseMethod.DELETE;
                 break;
             case RequestMethod.GET:
-                this.geneseMethod = this.serverSide.schema?.type === 'array' ? GeneseMethod.GET : GeneseMethod.GET_ONE;
+                this.geneseMethod = this.serverSide.schema?.type === 'array' ? GeneseMethod.GET_ALL : GeneseMethod.GET;
                 break;
             case RequestMethod.PATCH:
                 this.geneseMethod = GeneseMethod.PATCH;
@@ -256,9 +256,8 @@ export class RequestMethodFactory {
      * For a DELETE request, adds the corresponding method
      */
     setDeclarationAndGetBodyOfDeleteRequestMethod(): string {
-        this.method.setDeclaration(this.method.name, this.method.params, `Observable<any>`);
-        // TODO : refacto this line with genese-angular 1.2 (remove String)
-        return `return this.geneseService.getGeneseInstance(undefined).${GeneseMethod.DELETE}(\`${this.endPointWithParams}\`);`;
+        this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.observable}>`);
+        return `return this.geneseService.instance(${this.tConstructorInstance}).${GeneseMethod.DELETE}(\`${this.endPointWithParams}\`);`;
     }
 
 
@@ -266,12 +265,12 @@ export class RequestMethodFactory {
      * For a GET request, adds the corresponding method
      */
     setDeclarationAndGetBodyOfGetMethod(): string {
-        if (this.geneseMethod === GeneseMethod.GET) {
+        if (this.geneseMethod === GeneseMethod.GET_ALL) {
             this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.observable}[]>`);
-            return `return this.geneseService.getGeneseInstance(${this.serverSide.dataTypeName}).${this.geneseMethod}(\`${this.endPointWithParams}\`, options);`;
+            return `return this.geneseService.instance(${this.serverSide.dataTypeName}).${this.geneseMethod}(\`${this.endPointWithParams}\`, options);`;
         } else {
             this.method.setDeclaration(this.method.name, this.method.params, `Observable<${this.observable}>`);
-            return `return this.geneseService.getGeneseInstance(${this.tConstructorInstance}).${this.geneseMethod}(\`${this.endPointWithParams}\`);`;
+            return `return this.geneseService.instance(${this.tConstructorInstance}).${this.geneseMethod}(\`${this.endPointWithParams}\`);`;
         }
     }
 
