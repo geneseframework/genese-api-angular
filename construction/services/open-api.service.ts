@@ -8,10 +8,14 @@ const appRootPath = require('app-root-path');
  */
 export class OpenApiService {
 
-    private appRoot = appRootPath.toString();               // Root of the app
-    private static instance?: OpenApiService;               // Singleton instance of OpenApiService
-    public openApi?: OpenApi = {};                          // Empty OpenApi structure which will contain all the elements coming from the genese-api.json file
-    private readonly _openApiJsonFile?: OpenApi = {};       // The content of the genese-api.json file
+    openApi?: OpenApi = {};                                     // Empty OpenApi structure which will contain all the elements coming from the genese-api.json file
+
+    private appRoot = appRootPath.toString();                   // Root of the app
+    private _datatypeNames: Set<string> = new Set<string>();    // Set of names of DataType files
+    private static instance?: OpenApiService;                   // Singleton instance of OpenApiService
+    private readonly _openApiJsonFile?: OpenApi = {};           // The content of the genese-api.json file
+    private _refLinks: Set<string> = new Set<string>();         // Set of $ref links in endpoint schemas or in OpenApi Datatype objects
+
 
     private constructor() {
         this._openApiJsonFile = require(this.appRoot + '/genese-api.json');
@@ -45,7 +49,7 @@ export class OpenApiService {
      * @param propertyClass {TConstructor<T>}   // class of the next step (ComponentsFactory, SchemasFactory,...)
      * @param options                           // other information to send to the next step
      */
-    next<T>(target: object, propertyClass: TConstructor<T>, options?: any): OpenApiService {
+    next<T>(target: object, propertyClass: TConstructor<T>, options?: any): void {
         if (target && propertyClass) {
             const nextPropertyClassObject = new propertyClass();
             if (options) {
@@ -54,6 +58,34 @@ export class OpenApiService {
                 nextPropertyClassObject['init'](target);
             }
         }
-        return this;
+    }
+
+
+
+    // ----------------------------------------------------------------------------
+    //					            Datatype services
+    // ----------------------------------------------------------------------------
+
+
+
+
+    get datatypeNames(): Set<string> {
+        return this._datatypeNames;
+    }
+
+
+    addDatatypeName(datatypeName: string): void {
+        this._datatypeNames.add(datatypeName);
+    }
+
+
+
+    get refLinks(): Set<string> {
+        return this._refLinks;
+    }
+
+
+    addRefLinks(refLink: string): void {
+        this._refLinks.add(refLink);
     }
 }
