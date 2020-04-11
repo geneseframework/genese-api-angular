@@ -10,35 +10,35 @@ import { OpenApiSchema } from '../models/open-api/open-api-schema';
  */
 export class SchemasFactory implements InitFactoriesInterface {
 
-	private openApiService: OpenApiService = OpenApiService.getInstance();      // Instance of OpenApiService
+    private openApiService: OpenApiService = OpenApiService.getInstance();      // Instance of OpenApiService
 
 
-	constructor() {
-	}
+    constructor() {
+    }
 
 
     /**
      * Starts the creation of the DataTypes for each Schema
      */
-	init(target: any): void {
-		if (target?.schemas) {
-			this.openApiService.openApi.components.schemas = {};
-			this.createDataTypes(target.schemas);
-		}
-	}
+    init(target: any): void {
+        if (target?.schemas) {
+            this.openApiService.openApi.components.schemas = {};
+            this.createDataTypes(target.schemas);
+        }
+    }
 
 
     /**
      * Create DataType file for each Schema
      * @param schemas
      */
-	createDataTypes(schemas: OpenApiSchema[]): void {
-		for (const dataTypeName of Object.keys(schemas)) {
-			const dataTypeFactory = new DatatypeFactory();
-			dataTypeFactory.create(dataTypeName, schemas[dataTypeName]);
-			this.openApiService.openApi.components.schemas[dataTypeName] = schemas[dataTypeName];
-		}
-	}
+    createDataTypes(schemas: OpenApiSchema[]): void {
+        for (const dataTypeName of Object.keys(schemas)) {
+            const dataTypeFactory = new DatatypeFactory();
+            dataTypeFactory.create(dataTypeName, schemas[dataTypeName]);
+            this.openApiService.openApi.components.schemas[dataTypeName] = schemas[dataTypeName];
+        }
+    }
 
 
 

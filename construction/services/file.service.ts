@@ -5,9 +5,9 @@ export class FileService {
 
 	private appRoot = appRootPath.toString();
 
+
 	constructor() {
 	}
-
 
 
 	createFile(folder, name, data): void {
@@ -17,14 +17,17 @@ export class FileService {
 	}
 
 
-
 	updateFile(folder, name, data): void {
 		fse.writeFileSync(this.appRoot + folder + name, data);
 	}
 
 
-
 	readFile(path: string): Promise<string> {
 		return fse.readFile(this.appRoot + path, 'utf-8');
 	}
+
+
+	deleteFile(path: string): Promise<any> {
+	    return fse.remove(this.appRoot + path);
+    }
 }

@@ -3,14 +3,18 @@ import { FileService } from '../services/file.service';
 import { ClassFile } from '../models/files/class-file.model';
 import { getDataTypeNameFromRefSchema, toKebabCase } from '../services/tools.service';
 import { OpenApiSchema } from '../models/open-api/open-api-schema';
+import { OpenApiService } from '../services/open-api.service';
+
 
 /**
  * Factory of DataType files
  */
 export class DatatypeFactory {
 
-	private classFile: ClassFile = new ClassFile();             // File object which will be used to construct the file
-	private fileService: FileService = new FileService();       // Service managing files
+	private classFile: ClassFile = new ClassFile();                             // File object which will be used to construct the file
+	private fileService: FileService = new FileService();                       // Service managing files
+    private openApiService: OpenApiService = OpenApiService.getInstance();      // Instance of OpenApiService
+
 
 	constructor() {
 	}
@@ -21,6 +25,7 @@ export class DatatypeFactory {
      * @param schema
      */
 	create(dataTypeName: string, schema: OpenApiSchema): void {
+        this.openApiService.addDatatypeName(dataTypeName);
 		this.classFile
 			.setFileName(`${toKebabCase(dataTypeName)}.datatype.ts`)
 			.setFolder(`/genese/genese-api/datatypes/`)
@@ -67,6 +72,7 @@ export class DatatypeFactory {
 				if (property['$ref']) {
 					const dataTypeName = getDataTypeNameFromRefSchema(property['$ref']);
 					this.classFile.addImport(dataTypeName, `./${toKebabCase(dataTypeName)}.datatype`);
+					this.openApiService.addRefLinks(dataTypeName);
 					return `new ${dataTypeName}()`;
 				} else {
 					return '\'\'';
