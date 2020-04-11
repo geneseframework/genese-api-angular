@@ -35,7 +35,6 @@ export class SchemasFactory implements InitFactoriesInterface {
     createDataTypes(schemas: OpenApiSchema[]): void {
         for (const dataTypeName of Object.keys(schemas)) {
             const dataTypeFactory = new DatatypeFactory();
-            console.log('SCHEMAS dataTypeName', dataTypeName);
             dataTypeFactory.create(dataTypeName, schemas[dataTypeName]);
             this.openApiService.openApi.components.schemas[dataTypeName] = schemas[dataTypeName];
         }

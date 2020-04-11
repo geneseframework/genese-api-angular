@@ -3,6 +3,7 @@ import { OpenApiService } from '../services/open-api.service';
 import { ComponentsFactory } from './components.factory';
 import { PathsFactory } from './paths.factory';
 import { FileService } from '../services/file.service';
+import { toKebabCase } from '../services/tools.service';
 
 /**
  * Factory of DataTypes and Endpoints with the genese-api.json file
@@ -48,12 +49,13 @@ export class OpenApiFactory implements InitFactoriesInterface {
      * Remove all datatype files which are not linked to any other datatype file or any endpoint
      */
     shakeTreeDatatypes(): void {
-        console.log('OAF this.openApiService.refLinks', this.openApiService.refLinks);
-        console.log('OAF this.openApiService.datatypeNames', this.openApiService.datatypeNames);
         if (this.openApiService.datatypeNames) {
             this.openApiService.datatypeNames.forEach((name: string) => {
                 if (!this.openApiService.refLinks.has(name)) {
-                    this.fileService.deleteFile(`/genese/genese-api/datatypes/${name}.datatype.ts`)
+                    const fileToDelete = `/genese/genese-api/datatypes/${toKebabCase(name)}.datatype.ts`;
+                    this.fileService.deleteFile(fileToDelete).then(() => {
+                        console.warn(`WARNING: The Datatype OpenApi object ${name} is not linked to any Datatype or endpoint. The file '${toKebabCase(name)}.datatype.ts' has been deleted.`);
+                    });
                 }
             })
         }
