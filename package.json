@@ -17,7 +17,8 @@
     "@types/fs-extra": "^8.1.0",
     "@types/node": "^13.7.1",
     "app-root-path": "^3.0.0",
-    "fs-extra": "^8.1.0"
+    "fs-extra": "^8.1.0",
+    "handlebars": "^4.7.6"
   },
   "devDependencies": {
     "copy-to-clipboard": "^3.3.1",
