@@ -26,8 +26,8 @@ export class Construction {
         this.getConfig().then(() => {
             this.geneseRequestServiceFactory = GeneseRequestServiceFactory.getInstance();
             this.createFolders();
-            this.createEndpointsServicesAndDataTypes();
             this.createGeneseRequestService();
+            this.createEndpointsServicesAndDataTypes();
         });
     }
 
