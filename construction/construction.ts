@@ -30,9 +30,9 @@ export class Construction {
         this.getConfig().then(() => {
             this.geneseRequestServiceFactory = GeneseRequestServiceFactory.getInstance();
             this.createFolders();
-            this.createHandlebars();
-            // this.createGeneseRequestService();
-            // this.createEndpointsServicesAndDataTypes();
+            // this.createHandlebars();
+            this.createGeneseRequestService();
+            this.createEndpointsServicesAndDataTypes();
         });
     }
 
