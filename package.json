@@ -1,6 +1,6 @@
 {
   "name": "genese-api-angular",
-  "version": "0.0.36",
+  "version": "0.0.39",
   "scripts": {
     "genese-api": "tsc -t es5 construction/construction.ts && node index.js"
   },
@@ -16,6 +16,7 @@
   "dependencies": {
     "@types/fs-extra": "^8.1.0",
     "@types/node": "^13.7.1",
+    "ansi-colors": "^4.1.1",
     "app-root-path": "^3.0.0",
     "fs-extra": "^8.1.0"
   },

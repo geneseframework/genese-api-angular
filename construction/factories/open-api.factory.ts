@@ -4,6 +4,8 @@ import { ComponentsFactory } from './components.factory';
 import { PathsFactory } from './paths.factory';
 import { FileService } from '../services/file.service';
 import { toKebabCase } from '../services/tools.service';
+import { yellowBright } from 'ansi-colors';
+
 
 /**
  * Factory of DataTypes and Endpoints with the genese-api.json file
@@ -12,37 +14,37 @@ import { toKebabCase } from '../services/tools.service';
 export class OpenApiFactory implements InitFactoriesInterface {
 
     private fileService: FileService = new FileService();
-	private openApiService: OpenApiService = OpenApiService.getInstance();      // Instance of OpenApiService
+    private openApiService: OpenApiService = OpenApiService.getInstance();      // Instance of OpenApiService
 
 
-	constructor() {}
+    constructor() {}
 
 
     /**
      * Starts the creation of the DataTypes and of the request services of genese-request.service.ts file
      */
-	init() {
-		this.openApiService.openApi = {openapi: this.openApiService.openApiJsonFile.openapi};
+    init() {
+        this.openApiService.openApi = {openapi: this.openApiService.openApiJsonFile.openapi};
         this.createEndpointsServices();
-		this.createDatatypes();
-		this.shakeTreeDatatypes();
-	}
+        this.createDatatypes();
+        this.shakeTreeDatatypes();
+    }
 
 
     /**
      * Creates the DataTypes
      */
-	createDatatypes(): void {
-		this.openApiService.next(this.openApiService.openApiJsonFile, ComponentsFactory);
-	}
+    createDatatypes(): void {
+        this.openApiService.next(this.openApiService.openApiJsonFile, ComponentsFactory);
+    }
 
 
     /**
      * Creates the request services of genese-request.service.ts file
      */
-	createEndpointsServices(): void {
-		this.openApiService.next(this.openApiService.openApiJsonFile, PathsFactory);
-	}
+    createEndpointsServices(): void {
+        this.openApiService.next(this.openApiService.openApiJsonFile, PathsFactory);
+    }
 
 
     /**
@@ -53,9 +55,13 @@ export class OpenApiFactory implements InitFactoriesInterface {
             this.openApiService.datatypeNames.forEach((name: string) => {
                 if (!this.openApiService.refLinks.has(name)) {
                     const fileToDelete = `/genese/genese-api/datatypes/${toKebabCase(name)}.datatype.ts`;
+                    console.log(yellowBright(`WARNING: The Datatype OpenApi object ${name} is not linked to any Datatype or endpoint. The file '${toKebabCase(name)}.datatype.ts' has been deleted.`));
                     this.fileService.deleteFile(fileToDelete).then(() => {
-                        console.warn(`WARNING: The Datatype OpenApi object ${name} is not linked to any Datatype or endpoint. The file '${toKebabCase(name)}.datatype.ts' has been deleted.`);
-                    });
+                            console.log(yellowBright(`WARNING: The Datatype OpenApi object ${name} is not linked to any Datatype or endpoint. The file '${toKebabCase(name)}.datatype.ts' has been deleted.`));
+                        })
+                        .catch(err => {
+                            console.log(`Error : ${err}`);
+                        });
                 }
             })
         }
