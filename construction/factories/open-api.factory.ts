@@ -55,6 +55,7 @@ export class OpenApiFactory implements InitFactoriesInterface {
             this.openApiService.datatypeNames.forEach((name: string) => {
                 if (!this.openApiService.refLinks.has(name)) {
                     const fileToDelete = `/genese/genese-api/datatypes/${toKebabCase(name)}.datatype.ts`;
+                    console.log(yellowBright(`WARNING: The Datatype OpenApi object ${name} is not linked to any Datatype or endpoint. The file '${toKebabCase(name)}.datatype.ts' has been deleted.`));
                     this.fileService.deleteFile(fileToDelete).then(() => {
                             console.log(yellowBright(`WARNING: The Datatype OpenApi object ${name} is not linked to any Datatype or endpoint. The file '${toKebabCase(name)}.datatype.ts' has been deleted.`));
                         })
