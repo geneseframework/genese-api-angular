@@ -31,6 +31,8 @@ export class DatatypeFactory {
 			.setFolder(`/genese/genese-api/datatypes/`)
 			.setClassDeclaration(dataTypeName);
 		this.addPropertiesAndImports(dataTypeName, schema);
+
+        this.openApiService.addDatatypeName(dataTypeName);
 		this.fileService.createFile(this.classFile.folder, this.classFile.fileName, this.classFile.content);
 	}
 
@@ -45,8 +47,6 @@ export class DatatypeFactory {
 			for (let propertyName of Object.keys(schema.properties)) {
 				this.classFile.addProperty(`public ${propertyName} ?= ${this.addDefaultValueAndImport(dataTypeName, schema.properties[propertyName])};`);
 			}
-		} else if (schema.enum) {
-			// TODO
 		}
 	}
 
@@ -70,10 +70,10 @@ export class DatatypeFactory {
 				return '\'\'';
 			default: {
 				if (property['$ref']) {
-					const dataTypeName = getDataTypeNameFromRefSchema(property['$ref']);
-					this.classFile.addImport(dataTypeName, `./${toKebabCase(dataTypeName)}.datatype`);
-					this.openApiService.addRefLinks(dataTypeName);
-					return `new ${dataTypeName}()`;
+					const dTname = getDataTypeNameFromRefSchema(property['$ref']);
+					this.classFile.addImport(dTname, `./${toKebabCase(dTname)}.datatype`);
+					this.openApiService.addRefLinks(dTname);
+					return `new ${dTname}()`;
 				} else {
 					return '\'\'';
 				}
@@ -89,8 +89,11 @@ export class DatatypeFactory {
      */
 	getDefaultValueArrays(dataTypeName: string, property: Property): string {
 		let defaultValue = '[';
-		if (property && property.items) {
+		if (property?.items) {
 			defaultValue += this.addDefaultValueAndImport(dataTypeName, property.items);
+			if (property.items?.$ref) {
+                this.openApiService.addRefLinks(getDataTypeNameFromRefSchema(property.items?.$ref));
+            }
 		}
 		defaultValue += ']';
 		return defaultValue;

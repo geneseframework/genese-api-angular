@@ -58,7 +58,7 @@ export class Config {
             Config.indentation = indentation;
             return;
         }).catch(e => {
-            console.log('Warning : get indentation from .editorconfig failed. ', e);
+            console.log('WARNING : get indentation from .editorconfig failed. ', e);
             return '    ';
         });
     }
