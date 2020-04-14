@@ -132,6 +132,7 @@ export class RequestMethodFactory {
      */
     private addProperties(side: RequestSide): RequestMethodFactory {
         this.getSchemaFromContent(side)
+            .addRefLinks(side)
             .getRefOrPrimitive(side)
             .getDataTypeNameFromRefSchema(side)
             .addImport(side);
@@ -150,6 +151,19 @@ export class RequestMethodFactory {
     }
 
 
+
+    addRefLinks(side: RequestSide): RequestMethodFactory {
+        if (this[side].schema) {
+            if (this[side].schema?.$ref) {
+                this.openApiService.addRefLinks(getDataTypeNameFromRefSchema(this[side].schema.$ref));
+            } else if (this[side].schema?.type === 'array' && this[side].schema?.items?.$ref) {
+                this.openApiService.addRefLinks(getDataTypeNameFromRefSchema(this[side].schema?.items?.$ref));
+            }
+        }
+        return this;
+    }
+
+
     /**
      *     - Sets reference or primitive for a given request side
      *     - Adds dataTypeName to the set of DataType names
@@ -158,12 +172,15 @@ export class RequestMethodFactory {
     private getRefOrPrimitive(side: RequestSide): RequestMethodFactory {
         if (this[side].schema) {
             if (this[side].schema?.$ref) {
-                this.openApiService.addRefLinks(getDataTypeNameFromRefSchema(this[side].schema.$ref));
+                // this.openApiService.addRefLinks(getDataTypeNameFromRefSchema(this[side].schema.$ref));
                 this[side].refOrPrimitive = this[side].schema?.$ref;
             } else {
                 switch (this[side].schema?.type) {
                     case 'array':
                         this[side].refOrPrimitive = this[side].schema?.items?.$ref;
+                        // if (this[side].schema?.items?.$ref) {
+                        //     this.openApiService.addRefLinks(getDataTypeNameFromRefSchema(this[side].schema.$ref));
+                        // }
                         break;
                     case 'string':
                     case 'number':
