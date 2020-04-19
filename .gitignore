@@ -8,7 +8,6 @@
 /construction/**/*.js
 
 genese-api*
-cyms*
 
 # Only exists if Bazel was run
 /bazel-out
