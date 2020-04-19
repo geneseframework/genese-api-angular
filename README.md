@@ -35,7 +35,7 @@ Returning typed objects from your data-services to your components is fundamenta
  
  * ***GET requests***
  
- You will be sure the objects received from your GET requests have correct type (under the hood, genese-mapper maps all your data)
+ You will be sure the objects received from your GET requests have correct type (under the hood, [genese-mapper](https://www.npmjs.com/package/genese-mapper) maps all your data)
  
  * ***PUT and POST requests***
  
@@ -55,7 +55,7 @@ At first, you need to install the npm module:
 npm i genese-api-angular
 ```
 
-You need too to install Genese framework globally :
+Then install Genese framework globally :
 
 ```sh
 npm i -g genese
@@ -68,11 +68,11 @@ The minimum Angular version is Angular 8.
 [Top](#table-of-contents)
 ## 2. Creation of OpenApi file
 
-Supposing that you want to create a basic Angular application managing your book's library. Your API will contain only the classic CRUD methods getBook, getAllBooks, postBook, putBook and deleteBook. At first, you create your OpenAPI file (for example with [Apicurio](https://www.apicur.io/)).
+Supposing that you want to create a basic Angular application managing your book's library. Your API will contain only the classic CRUD methods `getBook`, `getAllBooks`, `postBook`, `putBook` and `deleteBook`.
 
-You have one path /books for getAllBooks and postBook methods, and another path /books/{id} for getBook, putBook and deleteBook methods.
+At first, you must create your OpenApi file. You can do that easily with the excellent [Apicurio application](https://www.apicur.io/). Download the JSON file corresponding to your API and put it in the root folder of your application, with the name `genese-api.json`.
 
-You will obtain approximately this OpenApi JSON file :
+Supposing that you created one path `/books` for `getAllBooks` and `postBook` methods, and another path `/books/{id}` for `getBook`, `putBook` and `deleteBook` methods, you will obtain approximately this OpenApi JSON file :
 
 
 ```json
@@ -257,9 +257,7 @@ You will obtain approximately this OpenApi JSON file :
 [Top](#table-of-contents)
 ## 3. Code generation
 
-At first, you must create your OpenApi file. You can do that easily with the excellent [Apicurio application](https://www.apicur.io/). Download the JSON file corresponding to your API and put it in the root folder of your application, with the name `genese-api.json`.
-
-After that, you just need to enter this code in your terminal :
+When your `genese-api.json` file is at the root of your project, you just need to enter this line in your terminal :
 
 ```ts
     genese new api
