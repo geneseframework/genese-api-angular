@@ -172,15 +172,11 @@ export class RequestMethodFactory {
     private getRefOrPrimitive(side: RequestSide): RequestMethodFactory {
         if (this[side].schema) {
             if (this[side].schema?.$ref) {
-                // this.openApiService.addRefLinks(getDataTypeNameFromRefSchema(this[side].schema.$ref));
                 this[side].refOrPrimitive = this[side].schema?.$ref;
             } else {
                 switch (this[side].schema?.type) {
                     case 'array':
                         this[side].refOrPrimitive = this[side].schema?.items?.$ref;
-                        // if (this[side].schema?.items?.$ref) {
-                        //     this.openApiService.addRefLinks(getDataTypeNameFromRefSchema(this[side].schema.$ref));
-                        // }
                         break;
                     case 'string':
                     case 'number':
@@ -335,6 +331,6 @@ export class RequestMethodFactory {
      * Gets the type of the Observable of the genese-angular method
      */
     private get observable(): string {
-        return isPrimitiveType(this.serverSide.dataTypeName) ? this.serverSide.dataTypeName.toLowerCase() : this.serverSide.dataTypeName;
+        return this.serverSide.dataTypeName;
     }
 }
