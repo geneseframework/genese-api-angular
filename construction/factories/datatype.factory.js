@@ -19,13 +19,14 @@ var DatatypeFactory = /** @class */ (function () {
      * @param schema
      */
     DatatypeFactory.prototype.create = function (dataTypeName, schema) {
-        this.openApiService.addDatatypeName(dataTypeName);
+        var className = tools_service_1.removeSpecialChars(dataTypeName);
+        this.openApiService.addDatatypeName(className);
         this.classFile
-            .setFileName(tools_service_1.toKebabCase(dataTypeName) + ".datatype.ts")
+            .setFileName(tools_service_1.toKebabCase(className) + ".datatype.ts")
             .setFolder("/genese/genese-api/datatypes/")
-            .setClassDeclaration(dataTypeName);
-        this.addPropertiesAndImports(dataTypeName, schema);
-        this.openApiService.addDatatypeName(dataTypeName);
+            .setClassDeclaration(className);
+        this.addPropertiesAndImports(className, schema);
+        this.openApiService.addDatatypeName(className);
         this.fileService.createFile(this.classFile.folder, this.classFile.fileName, this.classFile.content);
     };
     /**
@@ -37,7 +38,8 @@ var DatatypeFactory = /** @class */ (function () {
         if (schema.properties) {
             for (var _i = 0, _a = Object.keys(schema.properties); _i < _a.length; _i++) {
                 var propertyName = _a[_i];
-                this.classFile.addProperty("public " + propertyName + " ?= " + this.addDefaultValueAndImport(dataTypeName, schema.properties[propertyName]) + ";");
+                var name_1 = tools_service_1.toCamelCase(propertyName);
+                this.classFile.addProperty("public " + name_1 + " ?= " + this.addDefaultValueAndImport(dataTypeName, schema.properties[propertyName]) + ";");
             }
         }
     };

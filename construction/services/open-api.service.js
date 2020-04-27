@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var tools_service_1 = require("./tools.service");
 var appRootPath = require('app-root-path');
 /**
  * Services for the genese-api.json file and for parsing the OpenApi structure
@@ -72,7 +73,7 @@ var OpenApiService = /** @class */ (function () {
         configurable: true
     });
     OpenApiService.prototype.addRefLinks = function (refLink) {
-        this._refLinks.add(refLink);
+        this._refLinks.add(tools_service_1.removeSpecialChars(refLink));
     };
     return OpenApiService;
 }());

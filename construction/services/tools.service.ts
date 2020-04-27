@@ -1,5 +1,5 @@
 
-const specialChars = new RegExp(/[{}\-_\/]/);
+const specialChars = new RegExp(/[{}\-_\/]/g);
 
 
 
@@ -73,6 +73,11 @@ export function toKebabCase(word = ''): string {
 }
 
 
+export function removeSpecialChars(name: string): string {
+    return name ? name.replace(specialChars, '') : '';
+}
+
+
 
 // ----------------------------------------------------------------------------
 //						  Files and classes formatting
@@ -84,7 +89,10 @@ export function toKebabCase(word = ''): string {
  * @param refSchema
  */
 export function getDataTypeNameFromRefSchema(refSchema = ''): string {
-	return isPrimitiveType(refSchema) ? capitalize(refSchema) : refSchema.slice(refSchema.lastIndexOf('/') + 1);
+    const split = refSchema.split('\/');
+    const datatypeName = removeSpecialChars(split.pop());
+    const ref = split.slice(0, split.length - 1).concat(datatypeName).join();
+	return isPrimitiveType(ref) ? capitalize(ref) : datatypeName;
 }
 
 

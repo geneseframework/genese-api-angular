@@ -138,19 +138,15 @@ var RequestMethodFactory = /** @class */ (function () {
      * @param side  /  client or server side
      */
     RequestMethodFactory.prototype.getRefOrPrimitive = function (side) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g;
         if (this[side].schema) {
             if ((_a = this[side].schema) === null || _a === void 0 ? void 0 : _a.$ref) {
-                // this.openApiService.addRefLinks(getDataTypeNameFromRefSchema(this[side].schema.$ref));
-                this[side].refOrPrimitive = (_b = this[side].schema) === null || _b === void 0 ? void 0 : _b.$ref;
+                this[side].refOrPrimitive = tools_service_1.getDataTypeNameFromRefSchema((_b = this[side].schema) === null || _b === void 0 ? void 0 : _b.$ref);
             }
             else {
                 switch ((_c = this[side].schema) === null || _c === void 0 ? void 0 : _c.type) {
                     case 'array':
-                        this[side].refOrPrimitive = (_e = (_d = this[side].schema) === null || _d === void 0 ? void 0 : _d.items) === null || _e === void 0 ? void 0 : _e.$ref;
-                        // if (this[side].schema?.items?.$ref) {
-                        //     this.openApiService.addRefLinks(getDataTypeNameFromRefSchema(this[side].schema.$ref));
-                        // }
+                        this[side].refOrPrimitive = tools_service_1.getDataTypeNameFromRefSchema((_e = (_d = this[side].schema) === null || _d === void 0 ? void 0 : _d.items) === null || _e === void 0 ? void 0 : _e.$ref);
                         break;
                     case 'string':
                     case 'number':
@@ -158,8 +154,11 @@ var RequestMethodFactory = /** @class */ (function () {
                     case 'any':
                         this[side].refOrPrimitive = (_f = this[side].schema) === null || _f === void 0 ? void 0 : _f.type;
                         break;
+                    case 'integer':
+                        this[side].refOrPrimitive = 'number';
+                        break;
                     default:
-                        throw Error('Incorrect schema type');
+                        throw Error("Incorrect schema type : " + ((_g = this[side].schema) === null || _g === void 0 ? void 0 : _g.type));
                 }
             }
         }
@@ -291,7 +290,7 @@ var RequestMethodFactory = /** @class */ (function () {
          * Gets the type of the Observable of the genese-angular method
          */
         get: function () {
-            return tools_service_1.isPrimitiveType(this.serverSide.dataTypeName) ? this.serverSide.dataTypeName.toLowerCase() : this.serverSide.dataTypeName;
+            return this.serverSide.dataTypeName;
         },
         enumerable: true,
         configurable: true
