@@ -46,8 +46,7 @@ export class DatatypeFactory {
 	addPropertiesAndImports(dataTypeName: string, schema: OpenApiSchema): void {
 		if (schema.properties) {
 			for (let propertyName of Object.keys(schema.properties)) {
-			    const name = toCamelCase(propertyName);
-				this.classFile.addProperty(`public ${name} ?= ${this.addDefaultValueAndImport(dataTypeName, schema.properties[propertyName])};`);
+				this.classFile.addProperty(`public ${propertyName} ?= ${this.addDefaultValueAndImport(dataTypeName, schema.properties[propertyName])};`);
 			}
 		}
 	}
