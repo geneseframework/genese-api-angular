@@ -1,5 +1,6 @@
 import { TConstructor } from '../models/tconstructor';
 import { OpenApi } from '../models/open-api/open-api';
+import { removeSpecialChars } from './tools.service';
 
 const appRootPath = require('app-root-path');
 
@@ -86,6 +87,6 @@ export class OpenApiService {
 
 
     addRefLinks(refLink: string): void {
-        this._refLinks.add(refLink);
+        this._refLinks.add(removeSpecialChars(refLink));
     }
 }

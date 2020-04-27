@@ -6,7 +6,7 @@ import { RequestMethod } from '../models/requests/request-method.enum';
 import {
     capitalize,
     getDataTypeNameFromRefSchema,
-    isPrimitiveType,
+    isPrimitiveType, removeSpecialChars,
     toCamelCase,
     toKebabCase,
     unCapitalize
@@ -172,11 +172,11 @@ export class RequestMethodFactory {
     private getRefOrPrimitive(side: RequestSide): RequestMethodFactory {
         if (this[side].schema) {
             if (this[side].schema?.$ref) {
-                this[side].refOrPrimitive = this[side].schema?.$ref;
+                this[side].refOrPrimitive = getDataTypeNameFromRefSchema(this[side].schema?.$ref);
             } else {
                 switch (this[side].schema?.type) {
                     case 'array':
-                        this[side].refOrPrimitive = this[side].schema?.items?.$ref;
+                        this[side].refOrPrimitive = getDataTypeNameFromRefSchema(this[side].schema?.items?.$ref);
                         break;
                     case 'string':
                     case 'number':
@@ -184,8 +184,11 @@ export class RequestMethodFactory {
                     case 'any':
                         this[side].refOrPrimitive = this[side].schema?.type;
                         break;
+                    case 'integer':
+                        this[side].refOrPrimitive = 'number';
+                        break;
                     default:
-                        throw Error('Incorrect schema type');
+                        throw Error(`Incorrect schema type : ${this[side].schema?.type}`);
                 }
             }
         }

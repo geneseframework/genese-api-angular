@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var specialChars = new RegExp(/[{}\-_\/]/);
+var specialChars = new RegExp(/[{}\-_\/]/g);
 // ----------------------------------------------------------------------------
 //						    Text formatting
 // ----------------------------------------------------------------------------
@@ -71,6 +71,10 @@ function toKebabCase(word) {
     return formattedText;
 }
 exports.toKebabCase = toKebabCase;
+function removeSpecialChars(name) {
+    return name ? name.replace(specialChars, '') : '';
+}
+exports.removeSpecialChars = removeSpecialChars;
 // ----------------------------------------------------------------------------
 //						  Files and classes formatting
 // ----------------------------------------------------------------------------
@@ -80,7 +84,10 @@ exports.toKebabCase = toKebabCase;
  */
 function getDataTypeNameFromRefSchema(refSchema) {
     if (refSchema === void 0) { refSchema = ''; }
-    return isPrimitiveType(refSchema) ? capitalize(refSchema) : refSchema.slice(refSchema.lastIndexOf('/') + 1);
+    var split = refSchema.split('\/');
+    var datatypeName = removeSpecialChars(split.pop());
+    var ref = split.slice(0, split.length - 1).concat(datatypeName).join();
+    return isPrimitiveType(ref) ? capitalize(ref) : datatypeName;
 }
 exports.getDataTypeNameFromRefSchema = getDataTypeNameFromRefSchema;
 /**
