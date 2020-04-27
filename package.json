@@ -1,17 +1,17 @@
 {
   "name": "genese-api-angular",
-  "version": "0.1.4",
+  "version": "0.1.7",
   "scripts": {
     "genese-api": "tsc -t es5 construction/construction.ts && node index.js"
   },
   "author": {
     "name": "Gilles Fabre",
-    "url": "http://gillesfabre.com/"
+    "url": "http://github.com/gillesfabre34/genese-api-angular"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gillesfabre34/genese-api"
+    "url": "https://github.com/geneseframework/genese-api-angular"
   },
   "dependencies": {
     "@types/fs-extra": "^8.1.0",

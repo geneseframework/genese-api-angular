@@ -38,8 +38,7 @@ var DatatypeFactory = /** @class */ (function () {
         if (schema.properties) {
             for (var _i = 0, _a = Object.keys(schema.properties); _i < _a.length; _i++) {
                 var propertyName = _a[_i];
-                var name_1 = tools_service_1.toCamelCase(propertyName);
-                this.classFile.addProperty("public " + name_1 + " ?= " + this.addDefaultValueAndImport(dataTypeName, schema.properties[propertyName]) + ";");
+                this.classFile.addProperty("public " + propertyName + " ?= " + this.addDefaultValueAndImport(dataTypeName, schema.properties[propertyName]) + ";");
             }
         }
     };
